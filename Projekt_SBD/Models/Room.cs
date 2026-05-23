@@ -9,6 +9,7 @@ namespace Projekt_SBD.Models
         public int Id { get; set; } // Also the room number
         public int Floor { get; set; }
         public string Purpose { get; set; } // Change to enum later
+        public string Status { get; set; } // "Wolny" lub "Zajęty"
 
         // Relacje departamentu
         public int DepartmentId { get; set; }
