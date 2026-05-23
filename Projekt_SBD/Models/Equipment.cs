@@ -13,6 +13,8 @@ namespace Projekt_SBD.Models
         public int Value { get; set; }
         public DateTime PurchaseDate { get; set; }
         public DateTime LastInspection { get; set; }
-        // Room reference - to indicate where the equipment is stored
+        // Relacja: Wyposażenie jest przypisane do konkretnego pokoju
+        public int RoomId { get; set; }
+        public Room Room { get; set; }
     }
 }

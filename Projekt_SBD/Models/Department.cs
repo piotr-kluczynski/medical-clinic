@@ -9,5 +9,7 @@ namespace Projekt_SBD.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Room { get; set; }
+        // Relacja: jeden oddzial posiada wiele pokji
+        public ICollection<Room> Rooms { get; set; } = new List<Room>();
     }
 }

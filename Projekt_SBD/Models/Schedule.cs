@@ -11,6 +11,9 @@ namespace Projekt_SBD.Models
         public string Day { get; set; } // Change later to enum
         public int StartHour { get; set; }
         public int EndHour { get; set; }
-        // Worker reference
+
+        // Relacja: Grafik należy do konkretnego Pracownika
+        public int WorkerId { get; set; }
+        public Worker Worker { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Projekt_SBD.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseOracle("User Id=Piotr;Password=Admin123;Data Source=localhost:1521/FREE;");
+            optionsBuilder.UseOracle("User Id=Administrator;Password=Admin123;Data Source=localhost:1521/FREE;");
         }
     }
 }

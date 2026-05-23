@@ -10,6 +10,8 @@ namespace Projekt_SBD.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
-        // Room reference - to indicate where the supplies are stored
+        // Relacja: Wyroby medyczne są przechowywane w konkretnym pokoju/magazynie
+        public int RoomId { get; set; }
+        public Room Room { get; set; }
     }
 }

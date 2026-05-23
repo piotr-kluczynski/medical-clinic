@@ -12,8 +12,15 @@ namespace Projekt_SBD.Models
         public string Phone { get; set; }
         public string Email { get; set; }
 
-        public string Position { get; set; } // Job the worker is performing
+        public string Position { get; set; } // praca jaką wykonuje
         public int Salary { get; set; }
-        // Room reference - room assigned for the worker (optionally)
+
+        // Relacja: Pracownik może mieć przypisany swój stały pokój/gabinet
+        public int? RoomId { get; set; }
+        public Room Room { get; set; }
+
+        // Relacje odwrotne by łatwo przeglądac poszczególe rzeczy przypisane do pracownika
+        public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+        public ICollection<Diagnosis> Diagnoses { get; set; } = new List<Diagnosis>();
     }
 }

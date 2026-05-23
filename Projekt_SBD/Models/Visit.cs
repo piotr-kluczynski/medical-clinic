@@ -7,13 +7,22 @@ namespace Projekt_SBD.Models
     public class Visit
     {
         public int Id { get; set; }
-        // Patient reference
         public string Purpose { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-        // Assigned room reference
         public int Cost { get; set; }
-        // Diagnosis reference
-    
+
+        // Relacja do Pacjenta
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; }
+
+        // Relacja do Pokoju
+        public int RoomId { get; set; }
+        public Room Room { get; set; }
+
+        // Relacja do Diagnozy 
+        public int? DiagnosisId { get; set; }
+        public Diagnosis Diagnosis { get; set; }
+
     }
 }

@@ -9,7 +9,13 @@ namespace Projekt_SBD.Models
         public int Id { get; set; } // Also the room number
         public int Floor { get; set; }
         public string Purpose { get; set; } // Change to enum later
-        
-        // Department reference
+
+        // Relacje departamentu
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
+        public ICollection<Equipment> Equipments { get; set; } = new List<Equipment>();
+        public ICollection<Supply> Supplies { get; set; } = new List<Supply>();
+        public ICollection<Visit> Visits { get; set; } = new List<Visit>();
+        public ICollection<Worker> Workers { get; set; } = new List<Worker>();
     }
 }
