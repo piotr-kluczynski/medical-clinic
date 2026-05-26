@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Projekt_SBD.ConsoleUserInterface
+{
+    public interface IConsoleScreen
+    {
+        int Id { get; }
+        int Run();
+    }
+}
