@@ -1,21 +1,23 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
-    public class DateTimeField : IField
+    public class FormField
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
-        public DataType dataType { get; set; }
         public string? Description { get; set; }
 
-        public DateTimeField(int id, string name, string? description = null)
+        public string InvalidInputMsg { get; set; }
+        public Func<bool> ValidationFunc { get; set; }
+
+        public FormField(int id, string name, string invalidInputMsg, Func<bool> validationFunc, string? description = null)
         {
             Id = id;
             Name = name;
             Description = description;
 
-            dataType = DataType.DateTime;
-            Value = "";
+            InvalidInputMsg = invalidInputMsg;
+            ValidationFunc = validationFunc;
         }
 
         public void Display()
@@ -27,10 +29,10 @@
             }
         }
 
-        public bool Verify()
+        public bool Verify(out string invalidInputMsg)
         {
-            DateTime _ = DateTime.Now;
-            return DateTime.TryParse(Value, out _);
+            invalidInputMsg = InvalidInputMsg;
+            return ValidationFunc.Invoke();
         }
     }
 }

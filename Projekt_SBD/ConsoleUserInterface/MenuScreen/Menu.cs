@@ -11,11 +11,11 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 
         private readonly Dictionary<int, MenuOption> menuOptions;
 
-        public Action<int>? enterAction;
-        public Action<int>? leaveAction;
+        public Action? enterAction;
+        public Action? leaveAction;
 
         public Menu(ScreensEnum id, string name, string description, string helpMessage, ScreensEnum previousScreenId, List<MenuOption> menuOptions, 
-            Action<int>? enterAction = null, Action<int>? leaveAction = null)
+            Action? enterAction = null, Action? leaveAction = null)
         {
             Id = id;
             Name = name;
@@ -37,7 +37,7 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
         {
             if (enterAction != null)
             {
-                enterAction.Invoke(0);
+                enterAction.Invoke();
             }
 
             Console.WriteLine(Name);
@@ -67,7 +67,7 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
                     {
                         if (leaveAction != null)
                         {
-                            leaveAction.Invoke(0);
+                            leaveAction.Invoke();
                         }
                         return menuOptions[userChoice].Run();
                     }
@@ -83,7 +83,7 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 
             if (leaveAction != null)
             {
-                leaveAction.Invoke(0);
+                leaveAction.Invoke();
             }
             return PreviousScreenId;
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Projekt_SBD.ConsoleUserInterface.FormScreen
+﻿namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
     public class Form : IConsoleScreen
     {
@@ -12,15 +8,15 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
         public ScreensEnum CancelScreenId { get; set; }
         public ScreensEnum SucceedScreenId { get; set; }
 
-        public List<IField> fields { get; set; }
-        public Action<IField[]> formAction;
+        public List<FormField> fields { get; set; }
+        public Action<FormField[]> formAction;
 
-        public Action<int>? enterAction;
-        public Action<int>? leaveAction;
+        public Action? enterAction;
+        public Action? leaveAction;
 
-        public Form(ScreensEnum id, string name, string description, List<IField> fields, 
-            ScreensEnum cancelScreenId, ScreensEnum succeedScreenId, Action<IField[]> formAction,
-            Action<int>? enterAction = null, Action<int>? leaveAction = null)
+        public Form(ScreensEnum id, string name, string description, List<FormField> fields, 
+            ScreensEnum cancelScreenId, ScreensEnum succeedScreenId, Action<FormField[]> formAction,
+            Action? enterAction = null, Action? leaveAction = null)
         {
             Id = id;
             Name = name;
@@ -39,22 +35,23 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
         {
             if (enterAction != null) 
             {
-                enterAction.Invoke(0);
+                enterAction.Invoke();
             }
 
             Console.WriteLine(Name);
             Console.WriteLine(Description);
             Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
 
-            foreach (IField field in fields) 
+            foreach (FormField field in fields) 
             {
                 field.Display();
                 string givenValue = Console.ReadLine();
+                string errorMsg = "";
                 if (givenValue != "exit")
                 {
                     if (leaveAction != null)
                     {
-                        leaveAction.Invoke(0);
+                        leaveAction.Invoke();
                     }
                     return CancelScreenId;
                 }
@@ -63,18 +60,18 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
                     field.Value = givenValue;
                 }
 
-                while (!field.Verify())
+                while (!field.Verify(out errorMsg))
                 {
-                    Console.WriteLine("Given value was incorrect.\r\nTry again.");
+                    Console.WriteLine(errorMsg + "\r\nTry again.");
                     field.Display();
                     Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
                     givenValue = Console.ReadLine();
 
-                    if (givenValue != "exit")
+                    if (givenValue == "exit")
                     {
                         if (leaveAction != null)
                         {
-                            leaveAction.Invoke(0);
+                            leaveAction.Invoke();
                         }
                         return CancelScreenId;
                     }
@@ -89,7 +86,7 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 
             if (leaveAction != null)
             {
-                leaveAction.Invoke(0);
+                leaveAction.Invoke();
             }
             return SucceedScreenId;
         }
