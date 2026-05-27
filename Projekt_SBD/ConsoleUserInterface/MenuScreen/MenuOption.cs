@@ -5,23 +5,36 @@
         public int Id { get; set; }
         public string Title { get; set; }
         public string? SubTitle { get; set; }
-        public int TargetId { get; set; }
-    
-        public MenuOption(int id, string title, int targetId, string subTitle = null)
+        public ScreensEnum TargetScreenId { get; set; }
+
+        public Action<int>? interactAction;
+
+        public MenuOption(int id, string title, ScreensEnum targetScreenId, string? subTitle = null, Action<int>? interactAction = null)
         {
             Id = id;
             Title = title;
             SubTitle = subTitle;
-            TargetId = targetId;
+            TargetScreenId = targetScreenId;
+
+            this.interactAction = interactAction;
         }
 
         public void Display()
         {
             Console.WriteLine(Id + ". " + Title);
-            if (SubTitle != null) 
+            if (SubTitle != null)
             {
                 Console.WriteLine("     " + SubTitle);
             }
+        }
+
+        public ScreensEnum Run()
+        {
+            if (interactAction != null)
+            {
+                interactAction.Invoke(0);
+            }
+            return TargetScreenId;
         }
     }
 }

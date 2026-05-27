@@ -1,17 +1,23 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface
 {
+    public enum ScreensEnum
+    {
+        Exit,
+        MainMenu
+    }
+
     public class ConsoleScreenManager
     {
-        private Dictionary<int, IConsoleScreen> consoleScreens;
-        private int currentScreenId;
+        private Dictionary<ScreensEnum, IConsoleScreen> consoleScreens;
+        private ScreensEnum currentScreenId;
 
 
-        public ConsoleScreenManager(List<IConsoleScreen> consoleScreens, int startingScreen)
+        public ConsoleScreenManager(List<IConsoleScreen> consoleScreens, ScreensEnum startingScreen)
         {
-            this.consoleScreens = new Dictionary<int, IConsoleScreen>();
-            foreach(IConsoleScreen consoleScreen in consoleScreens)
+            this.consoleScreens = new Dictionary<ScreensEnum, IConsoleScreen>();
+            foreach (IConsoleScreen consoleScreen in consoleScreens.ToList())
             {
-                consoleScreens[consoleScreen.Id] = consoleScreen; 
+                this.consoleScreens.Add(consoleScreen.Id, consoleScreen);
             }
 
             currentScreenId = startingScreen;
@@ -19,9 +25,14 @@
 
         public void Run()
         {
-            while(currentScreenId >= 0)
+            while (currentScreenId >= 0)
             {
                 currentScreenId = consoleScreens[currentScreenId].Run();
+
+                if (currentScreenId == ScreensEnum.Exit)
+                {
+                    return;
+                }
             }
         }
     }

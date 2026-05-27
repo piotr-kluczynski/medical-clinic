@@ -3,15 +3,19 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {
     public class Menu : IConsoleScreen
     {
-        public int Id { get; set; }
+        public ScreensEnum Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string HelpMessage { get; set; }
-        public int PreviousScreenId { get; set; }
+        public ScreensEnum PreviousScreenId { get; set; }
 
         private readonly Dictionary<int, MenuOption> menuOptions;
 
-        public Menu(int id, string name, string description, string helpMessage, int previousScreenId, List<MenuOption> menuOptions)
+        public Action<int>? enterAction;
+        public Action<int>? leaveAction;
+
+        public Menu(ScreensEnum id, string name, string description, string helpMessage, ScreensEnum previousScreenId, List<MenuOption> menuOptions, 
+            Action<int>? enterAction = null, Action<int>? leaveAction = null)
         {
             Id = id;
             Name = name;
@@ -22,12 +26,20 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
             this.menuOptions = new Dictionary<int, MenuOption>();
             foreach (MenuOption menuOption in menuOptions)
             {
-                this.menuOptions[menuOption.Id] = menuOption;
+                this.menuOptions.Add(menuOption.Id, menuOption);
             }
+
+            this.enterAction = enterAction;
+            this.leaveAction = leaveAction;
         }
 
-        public int Run()
+        public ScreensEnum Run()
         {
+            if (enterAction != null)
+            {
+                enterAction.Invoke(0);
+            }
+
             Console.WriteLine(Name);
             Console.WriteLine(Description);
 
@@ -49,10 +61,15 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
                     if (userChoice == menuOptions.Count + 1)
                     {
                         Console.WriteLine(HelpMessage);
+                        continue;
                     }
                     else
                     {
-                        return menuOptions[userChoice].TargetId;
+                        if (leaveAction != null)
+                        {
+                            leaveAction.Invoke(0);
+                        }
+                        return menuOptions[userChoice].Run();
                     }
                 }
                 else
@@ -64,6 +81,10 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
                 userResponse = Console.ReadLine();
             }
 
+            if (leaveAction != null)
+            {
+                leaveAction.Invoke(0);
+            }
             return PreviousScreenId;
         }
     }
