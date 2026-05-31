@@ -1,5 +1,4 @@
-﻿
-namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
+﻿namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {
     public class Menu : IConsoleScreen
     {
