@@ -1,41 +1,25 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface.DisplayScreen
 {
-    public class Display : IConsoleScreen
+    public class Display : ConsoleScreen
     {
-        public ScreensEnum Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ScreensEnum ReturnScreenId { get; set; }
-
         public string[][] Content { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public Action? enterAction;
-        public Action? leaveAction;
-
-        public Display(ScreensEnum id, string name, string description, ScreensEnum returnScreenId,
+        public Display(ScreensEnum id, string name, string description, ScreensEnum previousScreenId,
             int width, int height, string[][] content,
-            Action? enterAction = null, Action? leaveAction = null)
+            Action? enterAction = null, Action? leaveAction = null) : base(id, name, description, previousScreenId, enterAction, leaveAction)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            ReturnScreenId = returnScreenId;
-
             Width = width;
             Height = height;
             Content = content;
-
-            this.enterAction = enterAction;
-            this.leaveAction = leaveAction;
         }
 
-        public ScreensEnum Run()
+        public override ScreensEnum Run()
         {
-            if (enterAction != null)
+            if (EnterAction != null)
             {
-                enterAction.Invoke();
+                EnterAction.Invoke();
             }
 
             Console.WriteLine(Name);
@@ -53,11 +37,11 @@
 
             Console.WriteLine("Press any button to close the screen.");
             Console.ReadKey();
-            if (leaveAction != null)
+            if (LeaveAction != null)
             {
-                leaveAction.Invoke();
+                LeaveAction.Invoke();
             }
-            return ReturnScreenId;
+            return PreviousScreenId;
         }
     }
 }

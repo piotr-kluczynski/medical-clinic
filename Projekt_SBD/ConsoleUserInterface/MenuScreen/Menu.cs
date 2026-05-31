@@ -1,42 +1,25 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {
-    public class Menu : IConsoleScreen
+    public class Menu : ConsoleScreen
     {
-        public ScreensEnum Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string HelpMessage { get; set; }
-        public ScreensEnum PreviousScreenId { get; set; }
-
         private readonly Dictionary<int, MenuOption> menuOptions;
 
-        public Action? enterAction;
-        public Action? leaveAction;
-
-        public Menu(ScreensEnum id, string name, string description, string helpMessage, ScreensEnum previousScreenId, List<MenuOption> menuOptions, 
-            Action? enterAction = null, Action? leaveAction = null)
+        public Menu(ScreensEnum id, string name, string description, ScreensEnum previousScreenId, 
+            List<MenuOption> menuOptions, 
+            Action? enterAction = null, Action? leaveAction = null) : base(id, name, description, previousScreenId, enterAction, leaveAction)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            HelpMessage = helpMessage;
-            PreviousScreenId = previousScreenId;
-
             this.menuOptions = new Dictionary<int, MenuOption>();
             foreach (MenuOption menuOption in menuOptions)
             {
                 this.menuOptions.Add(menuOption.Id, menuOption);
             }
-
-            this.enterAction = enterAction;
-            this.leaveAction = leaveAction;
         }
 
-        public ScreensEnum Run()
+        public override ScreensEnum Run()
         {
-            if (enterAction != null)
+            if (EnterAction != null)
             {
-                enterAction.Invoke();
+                EnterAction.Invoke();
             }
 
             Console.WriteLine(Name);
@@ -47,7 +30,6 @@
             {
                 option.Display();
             }
-            Console.WriteLine((menuOptions.Count + 1) + ". Help");
             Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
 
             string userResponse = Console.ReadLine();
@@ -56,20 +38,11 @@
             {
                 if (Int32.TryParse(userResponse, out userChoice))
                 {
-                    // Handling help request from the user
-                    if (userChoice == menuOptions.Count + 1)
+                    if (LeaveAction != null)
                     {
-                        Console.WriteLine(HelpMessage);
-                        continue;
+                        LeaveAction.Invoke();
                     }
-                    else
-                    {
-                        if (leaveAction != null)
-                        {
-                            leaveAction.Invoke();
-                        }
-                        return menuOptions[userChoice].Run();
-                    }
+                    return menuOptions[userChoice].Run();
                 }
                 else
                 {
@@ -80,9 +53,9 @@
                 userResponse = Console.ReadLine();
             }
 
-            if (leaveAction != null)
+            if (LeaveAction != null)
             {
-                leaveAction.Invoke();
+                LeaveAction.Invoke();
             }
             return PreviousScreenId;
         }

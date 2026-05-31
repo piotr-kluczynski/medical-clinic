@@ -1,59 +1,44 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
-    public class Form : IConsoleScreen
+    public class Form : ConsoleScreen
     {
-        public ScreensEnum Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ScreensEnum CancelScreenId { get; set; }
         public ScreensEnum SucceedScreenId { get; set; }
 
-        public List<FormField> fields { get; set; }
-        public Action<FormField[]> formAction;
+        public List<FormField> Fields { get; set; }
+        public Action<FormField[]> FormAction;
 
-        public Action? enterAction;
-        public Action? leaveAction;
-
-        public Form(ScreensEnum id, string name, string description, List<FormField> fields, 
-            ScreensEnum cancelScreenId, ScreensEnum succeedScreenId, Action<FormField[]> formAction,
-            Action? enterAction = null, Action? leaveAction = null)
+        public Form(ScreensEnum id, string name, string description, List<FormField> fields, ScreensEnum previousScreenId, 
+            ScreensEnum succeedScreenId, Action<FormField[]> formAction,
+            Action? enterAction = null, Action? leaveAction = null) : base(id, name, description, previousScreenId, enterAction, leaveAction)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            this.fields = fields;
-
-            CancelScreenId = cancelScreenId;
+            Fields = fields;
             SucceedScreenId = succeedScreenId;
-            this.formAction = formAction;
-
-            this.enterAction = enterAction;
-            this.leaveAction = leaveAction;
+            FormAction = formAction;
         }
 
-        public ScreensEnum Run()
+        public override ScreensEnum Run()
         {
-            if (enterAction != null) 
+            if (EnterAction != null) 
             {
-                enterAction.Invoke();
+                EnterAction.Invoke();
             }
 
             Console.WriteLine(Name);
             Console.WriteLine(Description);
             Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
 
-            foreach (FormField field in fields) 
+            foreach (FormField field in Fields) 
             {
                 field.Display();
                 string givenValue = Console.ReadLine();
                 string errorMsg = "";
                 if (givenValue != "exit")
                 {
-                    if (leaveAction != null)
+                    if (LeaveAction != null)
                     {
-                        leaveAction.Invoke();
+                        LeaveAction.Invoke();
                     }
-                    return CancelScreenId;
+                    return PreviousScreenId;
                 }
                 else
                 {
@@ -69,11 +54,11 @@
 
                     if (givenValue == "exit")
                     {
-                        if (leaveAction != null)
+                        if (LeaveAction != null)
                         {
-                            leaveAction.Invoke();
+                            LeaveAction.Invoke();
                         }
-                        return CancelScreenId;
+                        return PreviousScreenId;
                     }
                     else
                     {
@@ -82,11 +67,11 @@
                 }
             }
 
-            formAction.Invoke(fields.ToArray());
+            FormAction.Invoke(Fields.ToArray());
 
-            if (leaveAction != null)
+            if (LeaveAction != null)
             {
-                leaveAction.Invoke();
+                LeaveAction.Invoke();
             }
             return SucceedScreenId;
         }

@@ -1,42 +1,27 @@
 ﻿namespace Projekt_SBD.ConsoleUserInterface.ListScreen
 {
-    public class ConsoleList<T> : IConsoleScreen
+    public class ConsoleList<T> : ConsoleScreen
     {
-        public ScreensEnum Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ScreensEnum PreviousScreenId { get; set; }
-
         public List<T> Items { get; set; }
         public List<ListColumn<T>> Columns { get; set; }
         public Action<T>? InvestigateAction { get; set; }
 
-        public Action? enterAction;
-        public Action? leaveAction;
 
         public ConsoleList(ScreensEnum id, string name, string description, ScreensEnum previousScreenId, 
                     Action<T>? investigateAction, List<T> items, List<ListColumn<T>> columns,
-                    Action? enterAction = null, Action? leaveAction = null)
+                    Action? enterAction = null, Action? leaveAction = null) : base(id, name, description, previousScreenId, enterAction, leaveAction)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            PreviousScreenId = previousScreenId;
-
             Items = items;
             Columns = columns;
             InvestigateAction = investigateAction;
-
-            this.enterAction = enterAction;
-            this.leaveAction = leaveAction;
         }
 
-        public ScreensEnum Run()
+        public override ScreensEnum Run()
         {
             string userResponse = "";
-            if (enterAction != null)
+            if (EnterAction != null)
             {
-                enterAction.Invoke();
+                EnterAction.Invoke();
             }
 
             Console.WriteLine(Name);
@@ -112,9 +97,9 @@
             }
 
 
-            if (leaveAction != null)
+            if (LeaveAction != null)
             {
-                leaveAction.Invoke();
+                LeaveAction.Invoke();
             }
             return PreviousScreenId;
         }
