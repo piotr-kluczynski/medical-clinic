@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Dokumentacja
+Deklaracja_Projektowa_Analiza_Biznesowa_SBD_Kluczyński_Małecki.pdf
+
 # User-specific files
 *.rsuser
 *.suo
