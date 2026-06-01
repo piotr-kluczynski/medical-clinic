@@ -1,4 +1,5 @@
 ﻿using System;
+using Projekt_SBD.ConsoleUserInterface;
 using Projekt_SBD.Data; 
 
 namespace Projekt_SBD
@@ -7,6 +8,7 @@ namespace Projekt_SBD
     {
         static void Main(string[] args)
         {
+            /*
             Console.WriteLine("Trwa łączenie z bazą Oracle i zasilanie danymi testowymi...");
 
      
@@ -20,6 +22,10 @@ namespace Projekt_SBD
 
 
             Console.ReadLine();
+            */
+            List<IConsoleScreen> screens = ConsoleMenuInitializer.Initialize();
+            ConsoleScreenManager manager = new ConsoleScreenManager(screens, ScreensEnum.MainMenu);
+            manager.Run();
         }
     }
 }

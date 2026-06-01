@@ -32,7 +32,7 @@
                 field.Display();
                 string givenValue = Console.ReadLine();
                 string errorMsg = "";
-                if (givenValue != "exit")
+                if (givenValue == "exit")
                 {
                     if (LeaveAction != null)
                     {

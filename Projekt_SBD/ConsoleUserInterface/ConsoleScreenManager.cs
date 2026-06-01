@@ -3,7 +3,18 @@
     public enum ScreensEnum
     {
         Exit,
-        MainMenu
+        MainMenu,
+        LogInForm,
+        RegisterForm,
+        PatientList,
+        PatientDetails,
+        StaffList,
+        StaffDetails,
+        EquipmentList,
+        EquipmentDetails,
+        SupplyList,
+        SupplyDetails,
+        Hospital
     }
 
     public class ConsoleScreenManager

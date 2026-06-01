@@ -8,9 +8,9 @@
         public string? Description { get; set; }
 
         public string InvalidInputMsg { get; set; }
-        public Func<bool> ValidationFunc { get; set; }
+        public Func<string, bool> ValidationFunc { get; set; }
 
-        public FormField(int id, string name, string invalidInputMsg, Func<bool> validationFunc, string? description = null)
+        public FormField(int id, string name, string invalidInputMsg, Func<string, bool> validationFunc, string? description = null)
         {
             Id = id;
             Name = name;
@@ -32,7 +32,7 @@
         public bool Verify(out string invalidInputMsg)
         {
             invalidInputMsg = InvalidInputMsg;
-            return ValidationFunc.Invoke();
+            return ValidationFunc.Invoke(Value);
         }
     }
 }
