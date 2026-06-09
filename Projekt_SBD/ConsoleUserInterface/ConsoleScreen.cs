@@ -1,4 +1,6 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface
+﻿using Projekt_SBD.Data;
+
+namespace Projekt_SBD.ConsoleUserInterface
 {
     public abstract class ConsoleScreen : IConsoleScreen
     {

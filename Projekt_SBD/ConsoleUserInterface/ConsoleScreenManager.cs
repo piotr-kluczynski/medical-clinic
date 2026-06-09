@@ -1,22 +1,7 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface
-{
-    public enum ScreensEnum
-    {
-        Exit,
-        MainMenu,
-        LogInForm,
-        RegisterForm,
-        PatientList,
-        PatientDetails,
-        StaffList,
-        StaffDetails,
-        EquipmentList,
-        EquipmentDetails,
-        SupplyList,
-        SupplyDetails,
-        Hospital
-    }
+﻿using Projekt_SBD.Data;
 
+namespace Projekt_SBD.ConsoleUserInterface
+{
     public class ConsoleScreenManager
     {
         private Dictionary<ScreensEnum, IConsoleScreen> consoleScreens;

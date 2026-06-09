@@ -1,4 +1,6 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.ListScreen
+﻿using Projekt_SBD.Data;
+
+namespace Projekt_SBD.ConsoleUserInterface.ListScreen
 {
     public class ConsoleList<T> : ConsoleScreen
     {

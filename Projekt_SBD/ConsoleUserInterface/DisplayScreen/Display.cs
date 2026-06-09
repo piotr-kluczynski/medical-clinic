@@ -1,4 +1,6 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.DisplayScreen
+﻿using Projekt_SBD.Data;
+
+namespace Projekt_SBD.ConsoleUserInterface.DisplayScreen
 {
     public class Display : ConsoleScreen
     {

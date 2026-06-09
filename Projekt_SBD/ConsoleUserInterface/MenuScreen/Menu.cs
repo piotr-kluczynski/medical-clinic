@@ -1,4 +1,6 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
+﻿using Projekt_SBD.Data;
+
+namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {
     public class Menu : ConsoleScreen
     {

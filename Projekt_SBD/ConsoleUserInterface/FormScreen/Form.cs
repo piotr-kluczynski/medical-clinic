@@ -1,4 +1,6 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.FormScreen
+﻿using Projekt_SBD.Data;
+
+namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
     public class Form : ConsoleScreen
     {
