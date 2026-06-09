@@ -11,6 +11,7 @@ namespace Projekt_SBD.Models
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public string PasswordHash { get; set; }
 
         public string Position { get; set; } // praca jaką wykonuje
         public int Salary { get; set; }
