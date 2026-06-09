@@ -5,15 +5,18 @@ FOR EACH ROW
 DECLARE
     v_action VARCHAR2(10);
     v_user VARCHAR2(100);
+    v_used_amount NUMBER := 0;
 BEGIN
     IF UPDATING THEN
         v_action := 'UPDATE';
+        v_used_amount := :OLD."Quantity" - :NEW."Quantity";
         -- Blokada jeśli stan po aktualizacji schodzi poniżej 0
         IF :NEW."Quantity" < 0 THEN
             RAISE_APPLICATION_ERROR(-20004, 'Niewystarczająca ilość materiałów. Stan zapasów zablokowałby się poniżej zera.');
         END IF;
     ELSIF DELETING THEN
         v_action := 'DELETE';
+        v_used_amount := :OLD."Quantity";
     END IF;
 
     SELECT USER INTO v_user FROM DUAL;
@@ -26,6 +29,7 @@ BEGIN
         "Name", 
         "Description", 
         "Quantity",
+        "UsedAmount",
         "RoomId"
     ) VALUES (
         v_action,
@@ -35,6 +39,7 @@ BEGIN
         :OLD."Name",
         :OLD."Description",
         :OLD."Quantity",
+        v_used_amount,
         :OLD."RoomId"
     );
 END;
