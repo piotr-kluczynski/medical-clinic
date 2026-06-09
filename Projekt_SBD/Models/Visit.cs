@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -24,5 +24,8 @@ namespace Projekt_SBD.Models
         public int? DiagnosisId { get; set; }
         public Diagnosis Diagnosis { get; set; }
 
+        // Relacja do Pracownika (Lekarza)
+        public int WorkerId { get; set; }
+        public Worker Worker { get; set; }
     }
 }

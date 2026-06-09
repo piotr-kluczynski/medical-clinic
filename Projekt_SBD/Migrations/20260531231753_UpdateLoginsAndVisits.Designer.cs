@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using Projekt_SBD.Data;
@@ -11,9 +12,11 @@ using Projekt_SBD.Data;
 namespace Projekt_SBD.Migrations
 {
     [DbContext(typeof(PrzychodniaContext))]
-    partial class PrzychodniaContextModelSnapshot : ModelSnapshot
+    [Migration("20260531231753_UpdateLoginsAndVisits")]
+    partial class UpdateLoginsAndVisits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,47 +246,6 @@ namespace Projekt_SBD.Migrations
                     b.ToTable("Supplies");
                 });
 
-            modelBuilder.Entity("Projekt_SBD.Models.SupplyHist", b =>
-                {
-                    b.Property<int>("HistId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistId"));
-
-                    b.Property<string>("ActionType")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<DateTime>("ArchiveDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("ArchiveUser")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<int>("OriginalSupplyId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.HasKey("HistId");
-
-                    b.ToTable("Supplies_HIST");
-                });
-
             modelBuilder.Entity("Projekt_SBD.Models.Visit", b =>
                 {
                     b.Property<int>("Id")
@@ -328,58 +290,6 @@ namespace Projekt_SBD.Migrations
                     b.HasIndex("WorkerId");
 
                     b.ToTable("Visits");
-                });
-
-            modelBuilder.Entity("Projekt_SBD.Models.VisitHist", b =>
-                {
-                    b.Property<int>("HistId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistId"));
-
-                    b.Property<string>("ActionType")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<DateTime>("ArchiveDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("ArchiveUser")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<int>("Cost")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<int?>("DiagnosisId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<DateTime>("End")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<int>("OriginalVisitId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<string>("Purpose")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<DateTime>("Start")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.HasKey("HistId");
-
-                    b.ToTable("Visits_HIST");
                 });
 
             modelBuilder.Entity("Projekt_SBD.Models.Worker", b =>
