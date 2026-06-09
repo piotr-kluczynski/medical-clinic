@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Projekt_SBD.Models;
 
 namespace Projekt_SBD.Data
@@ -14,6 +14,8 @@ namespace Projekt_SBD.Data
         public DbSet<Supply> Supplies { get; set; }
         public DbSet<Visit> Visits { get; set; }
         public DbSet<Worker> Workers { get; set; }
+        public DbSet<VisitHist> VisitHists { get; set; }
+        public DbSet<SupplyHist> SupplyHists { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
