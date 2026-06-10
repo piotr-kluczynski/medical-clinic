@@ -1,6 +1,7 @@
 using System;
 using Projekt_SBD.ConsoleUserInterface;
-using Projekt_SBD.Data; 
+using Projekt_SBD.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Projekt_SBD
 {
@@ -13,6 +14,7 @@ namespace Projekt_SBD
             using (var context = new PrzychodniaContext())
             {
                 DbInitializer.Initialize(context);
+
             }
 
             Console.WriteLine("Gotowe! Baza danych została pomyślnie zasilona.");

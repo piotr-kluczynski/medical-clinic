@@ -68,9 +68,7 @@ namespace Projekt_SBD.Services
             _context = context;
         }
 
-        // ==========================
         // PKG_VISITS
-        // ==========================
 
         public async Task ScheduleVisitAsync(int patientId, int workerId, int roomId, DateTime startTime, DateTime endTime, string purpose, int cost)
         {
@@ -116,9 +114,8 @@ namespace Projekt_SBD.Services
             return result;
         }
 
-        // ==========================
         // PKG_INVENTORY
-        // ==========================
+
 
         public async Task ConsumeSupplyAsync(int supplyId, int amount)
         {
@@ -145,20 +142,15 @@ namespace Projekt_SBD.Services
                 retParam
             );
 
-            // Jeśli sprzętu nie ma wcale, retParam.Value może być DBNull
             if (retParam.Value == DBNull.Value)
             {
                 return 0;
             }
 
-            // OracleDbType.Decimal domyślnie rzutuje się na OracleDecimal, a w .NET na decimal
             return Convert.ToDecimal(retParam.Value.ToString());
         }
 
-        // ==========================
         // PKG_REPORTS
-        // ==========================
-
         public async Task<List<MonthlyCostDto>> GetMonthlyCostsAsync(int year, int month)
         {
             var result = new List<MonthlyCostDto>();
@@ -216,9 +208,7 @@ namespace Projekt_SBD.Services
             return result;
         }
 
-        // ==========================
         // WIDOKI (VIEWS)
-        // ==========================
 
         public async Task<List<DoctorAvailabilityViewDto>> GetDoctorAvailabilityViewAsync()
         {

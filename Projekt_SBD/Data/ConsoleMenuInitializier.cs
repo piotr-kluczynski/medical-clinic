@@ -32,15 +32,22 @@ namespace Projekt_SBD.Data
         AddSupplyDeliveryForm,
         MonthlyCostsForm,
 
-        PatientList,
+        PatientList_Reception,
+        PatientList_Doctor,
         PatientDetails,
         StaffList,
         StaffDetails,
         EquipmentList,
         EquipmentDetails,
-        SupplyList,
+        SupplyList_Reception,
+        SupplyList_Doctor,
+        SupplyList_Admin,
         SupplyDetails,
         DepartmentList,
+        RoomList_Admin,
+        VisitList_Reception,
+        DoctorList_Patient,
+        DoctorList_Reception,
         
         DoctorAvailabilityView_Reception,
         DoctorAvailabilityView_Doctor,
@@ -173,8 +180,9 @@ namespace Projekt_SBD.Data
                 ScreensEnum.PatientMenu, "Panel Pacjenta", "Witaj w swoim panelu!", ScreensEnum.MainMenu,
                 [
                     new MenuOption(1, "Moja historia medyczna", ScreensEnum.MyMedicalHistoryView),
-                    new MenuOption(2, "Sprawdź dostępność lekarzy", ScreensEnum.DoctorAvailabilityView_Patient),
-                    new MenuOption(3, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
+                    new MenuOption(2, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Patient),
+                    new MenuOption(3, "Sprawdź zajęte terminy", ScreensEnum.DoctorAvailabilityView_Patient),
+                    new MenuOption(4, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -184,9 +192,12 @@ namespace Projekt_SBD.Data
                 ScreensEnum.AdminMenu, "Panel Administratora", "Zarządzanie personelem i raportami.", ScreensEnum.MainMenu,
                 [
                     new MenuOption(1, "Dodaj nowego pracownika", ScreensEnum.AddWorkerForm),
-                    new MenuOption(2, "Raport kosztów operacyjnych", ScreensEnum.MonthlyCostsForm),
-                    new MenuOption(3, "Raport zużycia materiałów", ScreensEnum.SuppliesUsageReportForm),
-                    new MenuOption(4, "Wylicz łączną wartość majątku", ScreensEnum.CalculateAssetsValueScreen),
+                    new MenuOption(2, "Lista pracowników", ScreensEnum.StaffList),
+                    new MenuOption(3, "Lista pokoi", ScreensEnum.RoomList_Admin),
+                    new MenuOption(4, "Lista materiałów", ScreensEnum.SupplyList_Admin),
+                    new MenuOption(5, "Raport kosztów operacyjnych", ScreensEnum.MonthlyCostsForm),
+                    new MenuOption(6, "Raport zużycia materiałów", ScreensEnum.SuppliesUsageReportForm),
+                    new MenuOption(7, "Wylicz łączną wartość majątku", ScreensEnum.CalculateAssetsValueScreen),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -195,12 +206,15 @@ namespace Projekt_SBD.Data
             Menu receptionMenu = new Menu(
                 ScreensEnum.ReceptionMenu, "Panel Recepcji", "Obsługa pacjentów i harmonogramów.", ScreensEnum.MainMenu,
                 [
-                    new MenuOption(1, "Lista pacjentów", ScreensEnum.PatientList),
-                    new MenuOption(2, "Grafik lekarzy (Widok)", ScreensEnum.DoctorAvailabilityView_Reception),
-                    new MenuOption(3, "Umów wizytę (Procedura)", ScreensEnum.ScheduleVisitForm_Reception),
-                    new MenuOption(4, "Odwołaj wizytę (Procedura)", ScreensEnum.CancelVisitForm),
-                    new MenuOption(5, "Sprawdź braki w magazynie (Widok)", ScreensEnum.LowStockSuppliesView),
-                    new MenuOption(6, "Przyjmij dostawę materiałów (Procedura)", ScreensEnum.AddSupplyDeliveryForm),
+                    new MenuOption(1, "Lista pacjentów", ScreensEnum.PatientList_Reception),
+                    new MenuOption(2, "Lista wizyt", ScreensEnum.VisitList_Reception),
+                    new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Reception),
+                    new MenuOption(4, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Reception),
+                    new MenuOption(5, "Grafik lekarzy (Zajęte terminy)", ScreensEnum.DoctorAvailabilityView_Reception),
+                    new MenuOption(6, "Umów wizytę (Procedura)", ScreensEnum.ScheduleVisitForm_Reception),
+                    new MenuOption(7, "Odwołaj wizytę (Procedura)", ScreensEnum.CancelVisitForm),
+                    new MenuOption(8, "Sprawdź braki w magazynie (Widok)", ScreensEnum.LowStockSuppliesView),
+                    new MenuOption(9, "Przyjmij dostawę materiałów (Procedura)", ScreensEnum.AddSupplyDeliveryForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -210,8 +224,10 @@ namespace Projekt_SBD.Data
                 ScreensEnum.DoctorMenu, "Panel Lekarza", "Dostęp do wizyt i pacjentów.", ScreensEnum.MainMenu,
                 [
                     new MenuOption(1, "Mój grafik (Lista Wizyt)", ScreensEnum.DoctorAvailabilityView_Doctor),
-                    new MenuOption(2, "Historia Medyczna Pacjenta (Widok)", ScreensEnum.DoctorPatientHistoryForm),
-                    new MenuOption(3, "Zużyj materiał do zabiegu (Procedura)", ScreensEnum.ConsumeSupplyForm),
+                    new MenuOption(2, "Lista pacjentów", ScreensEnum.PatientList_Doctor),
+                    new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Doctor),
+                    new MenuOption(4, "Historia Medyczna Pacjenta (Widok)", ScreensEnum.DoctorPatientHistoryForm),
+                    new MenuOption(5, "Zużyj materiał do zabiegu (Procedura)", ScreensEnum.ConsumeSupplyForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -222,20 +238,33 @@ namespace Projekt_SBD.Data
                 [
                     new FormField(0, "ID Pacjenta", "", _ => true),
                     new FormField(1, "ID Lekarza", "Sprawdź w Grafiku Lekarzy", _ => true),
-                    new FormField(2, "ID Pokoju", "", _ => true),
-                    new FormField(3, "Cel wizyty", "", _ => true),
-                    new FormField(4, "Koszt", "", _ => true)
+                    new FormField(2, "Cel wizyty", "", _ => true),
+                    new FormField(3, "Koszt", "", _ => true)
                 ],
                 ScreensEnum.ReceptionMenu,
                 ScreensEnum.ReceptionMenu,
                 (formFields) => {
                     try {
                         using var context = new PrzychodniaContext();
+                        var workerId = int.Parse(formFields[1].Value);
+                        var doctor = context.Workers.FirstOrDefault(w => w.Id == workerId);
+                        
+                        if (doctor == null) {
+                            Console.WriteLine("\nBłąd: Lekarz o podanym ID nie istnieje.");
+                            Console.ReadKey();
+                            return;
+                        }
+                        if (doctor.RoomId == null) {
+                            Console.WriteLine("\nBłąd: Lekarz nie ma przypisanego gabinetu.");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var srv = new ClinicService(context);
                         srv.ScheduleVisitAsync(
-                            int.Parse(formFields[0].Value), int.Parse(formFields[1].Value), int.Parse(formFields[2].Value),
+                            int.Parse(formFields[0].Value), workerId, doctor.RoomId.Value,
                             DateTime.Now.AddDays(1), DateTime.Now.AddDays(1).AddHours(1),
-                            formFields[3].Value, int.Parse(formFields[4].Value)
+                            formFields[2].Value, int.Parse(formFields[3].Value)
                         ).Wait();
                         Console.WriteLine("Procedura wykonana pomyślnie. Zapisano w bazie.");
                     } catch (Exception ex) {
@@ -247,20 +276,33 @@ namespace Projekt_SBD.Data
 
             screens.Add(new Form(ScreensEnum.ScheduleVisitForm_Patient, "Umów Wizytę (Pacjent)", "Zapełnij dane do procedury ScheduleVisit",
                 [
-                    new FormField(0, "ID Lekarza", "Sprawdź w dostępności lekarzy (np. 1, 2, 3)", _ => true),
-                    new FormField(1, "ID Pokoju", "Domyślny pokój zabiegowy (np. 1)", _ => true),
-                    new FormField(2, "Cel wizyty", "Opisz powód", _ => true)
+                    new FormField(0, "ID Lekarza", "Sprawdź w dostępności lekarzy (np. 1)", _ => true),
+                    new FormField(1, "Cel wizyty", "Opisz powód", _ => true)
                 ],
                 ScreensEnum.PatientMenu,
                 ScreensEnum.PatientMenu,
                 (formFields) => {
                     try {
                         using var context = new PrzychodniaContext();
+                        var workerId = int.Parse(formFields[0].Value);
+                        var doctor = context.Workers.FirstOrDefault(w => w.Id == workerId);
+                        
+                        if (doctor == null) {
+                            Console.WriteLine("\nBłąd: Lekarz o podanym ID nie istnieje.");
+                            Console.ReadKey();
+                            return;
+                        }
+                        if (doctor.RoomId == null) {
+                            Console.WriteLine("\nBłąd: Lekarz nie ma przypisanego gabinetu.");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var srv = new ClinicService(context);
                         srv.ScheduleVisitAsync(
-                            Session.CurrentPatient.Id, int.Parse(formFields[0].Value), int.Parse(formFields[1].Value),
+                            Session.CurrentPatient.Id, workerId, doctor.RoomId.Value,
                             DateTime.Now.AddDays(1), DateTime.Now.AddDays(1).AddHours(1),
-                            formFields[2].Value, 100
+                            formFields[1].Value, 100
                         ).Wait();
                         Console.WriteLine("Procedura wykonana pomyślnie. Udało się umówić wizytę.");
                     } catch (Exception ex) {
@@ -331,22 +373,47 @@ namespace Projekt_SBD.Data
                     new FormField(2, "Stanowisko", "np. Lekarz, Administrator, Recepcja", _ => true),
                     new FormField(3, "Telefon", "", _ => true),
                     new FormField(4, "Email", "", _ => true),
-                    new FormField(5, "Hasło", "", _ => true)
+                    new FormField(5, "Hasło", "", _ => true),
+                    new FormField(6, "Wynagrodzenie", "Podaj miesięczną pensję w PLN (np. 15000)", _ => true),
+                    new FormField(7, "ID Pokoju", "Dla lekarza wymagane, dla reszty opcjonalne (wpisz ID lub zostaw puste)", _ => true)
                 ],
                 ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
                 (f) => {
                     try {
                         using var ctx = new PrzychodniaContext();
-                        ctx.Workers.Add(new Worker {
+                        var worker = new Worker {
                             FirstName = f[0].Value,
                             LastName = f[1].Value,
                             Position = f[2].Value,
                             Phone = f[3].Value,
                             Email = f[4].Value,
-                            PasswordHash = f[5].Value
-                        });
+                            PasswordHash = f[5].Value,
+                            Salary = int.TryParse(f[6].Value, out int s) ? s : 0
+                        };
+
+                        string roomIdStr = f[7].Value;
+                        if (!string.IsNullOrWhiteSpace(roomIdStr) && int.TryParse(roomIdStr, out int rId)) {
+                            var room = ctx.Rooms.FirstOrDefault(r => r.Id == rId);
+                            if (room == null) {
+                                Console.WriteLine("\nBłąd: Pokój o podanym ID nie istnieje w bazie!");
+                                Console.ReadKey();
+                                return;
+                            }
+                            worker.RoomId = rId;
+                            room.Status = "Zajęty"; // Aktualizujemy status pokoju na Zajęty
+                        } else {
+                            string pos = f[2].Value.ToLower();
+                            var excludedPositions = new[] { "administrator", "owner", "reception", "nurse", "recepcja", "pielęgniarka", "właściciel" };
+                            if (!excludedPositions.Contains(pos)) {
+                                Console.WriteLine("\nBłąd: Lekarz musi mieć obowiązkowo przypisany pokój (gabinet)!");
+                                Console.ReadKey();
+                                return;
+                            }
+                        }
+
+                        ctx.Workers.Add(worker);
                         ctx.SaveChanges();
-                        Console.WriteLine("Dodano pracownika pomyślnie!");
+                        Console.WriteLine("\nDodano pracownika pomyślnie! " + (worker.RoomId != null ? "Zaktualizowano status pokoju na Zajęty." : ""));
                     } catch(Exception e) { Console.WriteLine("Błąd EF: " + e.Message); }
                     Console.ReadKey();
                 }
@@ -460,7 +527,7 @@ namespace Projekt_SBD.Data
             ));
 
             screens.Add(new ConsoleList<Patient>(
-                ScreensEnum.PatientList, "Lista Pacjentów", "Zarejestrowani pacjenci", ScreensEnum.ReceptionMenu, 
+                ScreensEnum.PatientList_Reception, "Lista Pacjentów", "Zarejestrowani pacjenci", ScreensEnum.ReceptionMenu, 
                 null, new List<Patient>(), 
                 [
                     new ListColumn<Patient>("ID", p => p.Id.ToString()),
@@ -471,10 +538,104 @@ namespace Projekt_SBD.Data
                 ],
                 () => {
                     using var ctx = new PrzychodniaContext();
-                    var listScreen = screens.First(s => s.Id == ScreensEnum.PatientList) as ConsoleList<Patient>;
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.PatientList_Reception) as ConsoleList<Patient>;
                     listScreen.Items = ctx.Patients.ToList();
                 }
             ));
+
+            screens.Add(new ConsoleList<Patient>(
+                ScreensEnum.PatientList_Doctor, "Lista Pacjentów", "Zarejestrowani pacjenci", ScreensEnum.DoctorMenu, 
+                null, new List<Patient>(), 
+                [
+                    new ListColumn<Patient>("ID", p => p.Id.ToString()),
+                    new ListColumn<Patient>("Imię", p => p.FirstName),
+                    new ListColumn<Patient>("Nazwisko", p => p.LastName),
+                    new ListColumn<Patient>("Telefon", p => p.Phone)
+                ],
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.PatientList_Doctor) as ConsoleList<Patient>;
+                    listScreen.Items = ctx.Patients.ToList();
+                }
+            ));
+
+            Action loadSupplies = () => {
+                using var ctx = new PrzychodniaContext();
+                var listAdmin = screens.FirstOrDefault(s => s.Id == ScreensEnum.SupplyList_Admin) as ConsoleList<Supply>;
+                if (listAdmin != null) listAdmin.Items = ctx.Supplies.ToList();
+
+                var listRec = screens.FirstOrDefault(s => s.Id == ScreensEnum.SupplyList_Reception) as ConsoleList<Supply>;
+                if (listRec != null) listRec.Items = ctx.Supplies.ToList();
+
+                var listDoc = screens.FirstOrDefault(s => s.Id == ScreensEnum.SupplyList_Doctor) as ConsoleList<Supply>;
+                if (listDoc != null) listDoc.Items = ctx.Supplies.ToList();
+            };
+
+            var supplyColumns = new List<ListColumn<Supply>> {
+                new ListColumn<Supply>("ID", s => s.Id.ToString()),
+                new ListColumn<Supply>("Nazwa", s => s.Name),
+                new ListColumn<Supply>("Ilość", s => s.Quantity.ToString()),
+                new ListColumn<Supply>("Opis", s => s.Description)
+            };
+
+            screens.Add(new ConsoleList<Supply>(ScreensEnum.SupplyList_Admin, "Lista materiałów", "Stan magazynu", ScreensEnum.AdminMenu, null, new List<Supply>(), supplyColumns, loadSupplies));
+            screens.Add(new ConsoleList<Supply>(ScreensEnum.SupplyList_Reception, "Lista materiałów", "Stan magazynu", ScreensEnum.ReceptionMenu, null, new List<Supply>(), supplyColumns, loadSupplies));
+            screens.Add(new ConsoleList<Supply>(ScreensEnum.SupplyList_Doctor, "Lista materiałów", "Stan magazynu", ScreensEnum.DoctorMenu, null, new List<Supply>(), supplyColumns, loadSupplies));
+
+            screens.Add(new ConsoleList<Room>(
+                ScreensEnum.RoomList_Admin, "Lista Pokoi", "Wszystkie gabinety", ScreensEnum.AdminMenu, 
+                null, new List<Room>(), 
+                [
+                    new ListColumn<Room>("ID", r => r.Id.ToString()),
+                    new ListColumn<Room>("Piętro", r => r.Floor.ToString()),
+                    new ListColumn<Room>("Przeznaczenie", r => r.Purpose),
+                    new ListColumn<Room>("Status", r => r.Status)
+                ],
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.RoomList_Admin) as ConsoleList<Room>;
+                    listScreen.Items = ctx.Rooms.ToList();
+                }
+            ));
+
+            screens.Add(new ConsoleList<Visit>(
+                ScreensEnum.VisitList_Reception, "Lista Wizyt", "Wszystkie zaplanowane wizyty", ScreensEnum.ReceptionMenu, 
+                null, new List<Visit>(), 
+                [
+                    new ListColumn<Visit>("ID", v => v.Id.ToString()),
+                    new ListColumn<Visit>("ID Pacjenta", v => v.PatientId.ToString()),
+                    new ListColumn<Visit>("Lekarz ID", v => v.WorkerId.ToString()),
+                    new ListColumn<Visit>("Cel wizyty", v => v.Purpose),
+                    new ListColumn<Visit>("Data", v => v.Start.ToString("yyyy-MM-dd HH:mm"))
+                ],
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.VisitList_Reception) as ConsoleList<Visit>;
+                    listScreen.Items = ctx.Visits.ToList();
+                }
+            ));
+
+            Action loadDoctors = () => {
+                using var ctx = new PrzychodniaContext();
+                var excludedPositions = new[] { "administrator", "owner", "reception", "nurse", "recepcja", "pielęgniarka", "właściciel" };
+                var doctors = ctx.Workers.Where(w => !excludedPositions.Contains(w.Position.ToLower())).ToList();
+
+                var listPat = screens.FirstOrDefault(s => s.Id == ScreensEnum.DoctorList_Patient) as ConsoleList<Worker>;
+                if (listPat != null) listPat.Items = doctors;
+
+                var listRec = screens.FirstOrDefault(s => s.Id == ScreensEnum.DoctorList_Reception) as ConsoleList<Worker>;
+                if (listRec != null) listRec.Items = doctors;
+            };
+
+            var doctorColumns = new List<ListColumn<Worker>> {
+                new ListColumn<Worker>("ID", w => w.Id.ToString()),
+                new ListColumn<Worker>("Imię", w => w.FirstName),
+                new ListColumn<Worker>("Nazwisko", w => w.LastName),
+                new ListColumn<Worker>("Stanowisko", w => w.Position)
+            };
+
+            screens.Add(new ConsoleList<Worker>(ScreensEnum.DoctorList_Patient, "Lista Lekarzy", "Wszyscy lekarze w przychodni", ScreensEnum.PatientMenu, null, new List<Worker>(), doctorColumns, loadDoctors));
+            screens.Add(new ConsoleList<Worker>(ScreensEnum.DoctorList_Reception, "Lista Lekarzy", "Wszyscy lekarze w przychodni", ScreensEnum.ReceptionMenu, null, new List<Worker>(), doctorColumns, loadDoctors));
 
             return screens;
         }
