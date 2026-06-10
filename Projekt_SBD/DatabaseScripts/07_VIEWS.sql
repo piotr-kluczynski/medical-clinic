@@ -1,4 +1,3 @@
--- 1. Widok dostępności lekarzy
 CREATE OR REPLACE VIEW "v_DoctorAvailability" AS
 SELECT 
     w."Id" AS "DoctorId",
@@ -9,11 +8,9 @@ SELECT
     v."End"
 FROM "Workers" w
 JOIN "Visits" v ON w."Id" = v."WorkerId"
--- Wykluczamy personel niemedyczny (zakładając przykładowe nazwy ról)
 WHERE w."Position" NOT IN ('Reception', 'Administrator', 'Nurse', 'Owner', 'Recepcja', 'Pielęgniarka', 'Administrator');
 /
 
--- 2. Pełna karta historii medycznej pacjenta
 CREATE OR REPLACE VIEW "v_PatientMedicalHistory" AS
 SELECT 
     p."Id" AS "PatientId",
@@ -30,7 +27,6 @@ JOIN "Diagnosis" d ON d."Id" = v."DiagnosisId"
 JOIN "Workers" w ON w."Id" = d."WorkerId";
 /
 
--- 3. Widok materiałów wymagających uzupełnienia (niski stan)
 CREATE OR REPLACE VIEW "v_LowStockSupplies" AS
 SELECT 
     s."Id" AS "SupplyId",

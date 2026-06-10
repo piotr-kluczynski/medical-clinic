@@ -1,4 +1,4 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.FormScreen
+namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
     public class FormField
     {
@@ -22,11 +22,8 @@
 
         public void Display()
         {
-            Console.WriteLine(Name);
-            if (Description != null)
-            {
-                Console.WriteLine("     " + Description + "\r\n");
-            }
+            string desc = string.IsNullOrWhiteSpace(Description) ? "" : $" [{Description}]";
+            Console.Write($"{Name}{desc}: ");
         }
 
         public bool Verify(out string invalidInputMsg)

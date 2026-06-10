@@ -1,4 +1,3 @@
--- Tworzenie triggera archiwizującego dla wizyt
 CREATE OR REPLACE TRIGGER TRG_ArchiveVisit
 AFTER UPDATE OR DELETE ON "Visits"
 FOR EACH ROW

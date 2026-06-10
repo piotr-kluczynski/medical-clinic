@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,7 +10,6 @@ namespace Projekt_SBD.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
-        // Relacja: Wyroby medyczne są przechowywane w konkretnym pokoju/magazynie
         public int RoomId { get; set; }
         public Room Room { get; set; }
     }

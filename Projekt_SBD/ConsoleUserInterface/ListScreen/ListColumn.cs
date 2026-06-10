@@ -1,4 +1,4 @@
-﻿namespace Projekt_SBD.ConsoleUserInterface.ListScreen
+namespace Projekt_SBD.ConsoleUserInterface.ListScreen
 {
     public class ListColumn<T>
     {

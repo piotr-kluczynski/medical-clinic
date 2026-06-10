@@ -12,7 +12,6 @@ namespace Projekt_SBD.Data
     {
         public static void Initialize(PrzychodniaContext context) 
         {
-            // Pobieramy lub tworzymy departament
             var department = context.Departments.FirstOrDefault(d => d.Name == "Kardiologia");
             if (department == null)
             {
@@ -21,7 +20,6 @@ namespace Projekt_SBD.Data
                 context.SaveChanges();
             }
 
-            // Pobieramy lub tworzymy pokój
             var room = context.Rooms.FirstOrDefault(r => r.DepartmentId == department.Id);
             if (room == null)
             {
@@ -36,7 +34,6 @@ namespace Projekt_SBD.Data
                 context.SaveChanges();
             }
 
-            // Pobieramy lub tworzymy lekarza
             var doctor = context.Workers.FirstOrDefault(w => w.Email == "jan.kowalski@przychodnia.pl");
             if (doctor == null)
             {
@@ -54,7 +51,6 @@ namespace Projekt_SBD.Data
                 context.Workers.Add(doctor);
             }
 
-            // Pobieramy lub tworzymy pielęgniarkę
             var nurse = context.Workers.FirstOrDefault(w => w.Email == "anna.nowak@przychodnia.pl");
             if (nurse == null)
             {
@@ -70,9 +66,41 @@ namespace Projekt_SBD.Data
                 };
                 context.Workers.Add(nurse);
             }
+
+            var admin = context.Workers.FirstOrDefault(w => w.Email == "admin@przychodnia.pl");
+            if (admin == null)
+            {
+                admin = new Worker 
+                { 
+                    FirstName = "Szef", 
+                    LastName = "Kliniki", 
+                    Email = "admin@przychodnia.pl",
+                    PasswordHash = "Admin123",
+                    Phone = "000000000", 
+                    Position = "Administrator", 
+                    Salary = 20000 
+                };
+                context.Workers.Add(admin);
+            }
+
+            var reception = context.Workers.FirstOrDefault(w => w.Email == "recepcja@przychodnia.pl");
+            if (reception == null)
+            {
+                reception = new Worker 
+                { 
+                    FirstName = "Basia", 
+                    LastName = "Z-Recepcji", 
+                    Email = "recepcja@przychodnia.pl",
+                    PasswordHash = "Admin123",
+                    Phone = "123123123", 
+                    Position = "Reception", 
+                    Salary = 5000 
+                };
+                context.Workers.Add(reception);
+            }
+
             context.SaveChanges();
 
-            // Pobieramy lub tworzymy pacjenta
             var patient = context.Patients.FirstOrDefault(p => p.Email == "michal@test.pl");
             if (patient == null)
             {
@@ -88,7 +116,6 @@ namespace Projekt_SBD.Data
                 context.SaveChanges();
             }
 
-            // Wyposażenie
             if (!context.Equipment.Any(e => e.Name == "Defibrylator"))
             {
                 var equipment = new Equipment 
@@ -104,7 +131,6 @@ namespace Projekt_SBD.Data
                 context.Equipment.Add(equipment);
             }
 
-            // Zasoby (Materiały)
             if (!context.Supplies.Any(s => s.Name == "Strzykawka 5ml"))
             {
                 var supply = new Supply 
@@ -118,12 +144,10 @@ namespace Projekt_SBD.Data
             }
             context.SaveChanges();
 
-            // Ustawiamy stałe daty, aby móc je precyzyjnie sprawdzać w bazie
             DateTime diagnosisDate = new DateTime(2024, 2, 10, 10, 0, 0);
             DateTime visitStart = new DateTime(2024, 2, 15, 12, 0, 0);
             DateTime visitEnd = new DateTime(2024, 2, 15, 12, 30, 0);
 
-            // Diagnoza
             var diagnosis = context.Diagnosis.FirstOrDefault(d => d.PatientId == patient.Id && d.DiagnosisTime == diagnosisDate);
             if (diagnosis == null)
             {
@@ -139,7 +163,6 @@ namespace Projekt_SBD.Data
                 context.SaveChanges();
             }
 
-            // Wizyta 
             if (!context.Visits.Any(v => v.PatientId == patient.Id && v.Start == visitStart))
             {
                 var visit = new Visit 
@@ -157,7 +180,6 @@ namespace Projekt_SBD.Data
                 context.SaveChanges();
             }
 
-            // Harmonogram (Dla lekarza na dany dzień)
             if (!context.Schedules.Any(s => s.WorkerId == doctor.Id && s.Day == "Monday"))
             {
                 var schedule = new Schedule

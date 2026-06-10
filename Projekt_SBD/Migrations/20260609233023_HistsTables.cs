@@ -4,23 +4,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Projekt_SBD.Migrations
 {
-    public partial class RoomStatus : Migration
+    public partial class HistsTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Status",
-                table: "Rooms",
-                type: "NVARCHAR2(2000)",
+            migrationBuilder.AddColumn<int>(
+                name: "UsedAmount",
+                table: "Supplies_HIST",
+                type: "NUMBER(10)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Rooms");
+                name: "UsedAmount",
+                table: "Supplies_HIST");
         }
     }
 }

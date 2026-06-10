@@ -1,10 +1,20 @@
-﻿using Projekt_SBD.Data;
+using Projekt_SBD.Data;
 
 namespace Projekt_SBD.ConsoleUserInterface.ListScreen
 {
     public class ConsoleList<T> : ConsoleScreen
     {
-        public List<T> Items { get; set; }
+        private List<T> _items = new List<T>();
+        public List<T> Items 
+        { 
+            get => _items; 
+            set 
+            { 
+                _items = value; 
+                if (value != null) OriginalItems = new List<T>(value); 
+            } 
+        }
+        public List<T> OriginalItems { get; private set; } = new List<T>();
         public List<ListColumn<T>> Columns { get; set; }
         public Action<T>? InvestigateAction { get; set; }
 
@@ -34,19 +44,22 @@ namespace Projekt_SBD.ConsoleUserInterface.ListScreen
                 var userInput = "";
                 DrawTable();
 
-                // Display the instruction
                 if (InvestigateAction != null)
                 {
-                    Console.WriteLine("To investigate a record, enter 'investigate'.");
+                    Console.WriteLine("\nAby sprawdzić szczegóły rekordu, wpisz 'badaj'.");
                 }
-                Console.WriteLine("To sort table by column, enter 'sort'.");
-                Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
-                userResponse = Console.ReadLine();
+                Console.WriteLine("Aby posortować tabelę, wpisz 'sortuj'.");
+                Console.WriteLine("Aby zresetować sortowanie, wpisz 'reset'.");
+                Console.WriteLine("Aby wyjść z menu, wpisz '0' lub 'exit'.");
+                
+                Console.Write("\nWybierz akcję: ");
+                userResponse = Console.ReadLine() ?? "";
 
-                if (userResponse == "investigate" && InvestigateAction != null)
+                if (userResponse == "badaj" && InvestigateAction != null)
                 {
-                    Console.WriteLine("Select id of the row you would like to investigate:");
-                    userInput = Console.ReadLine();
+                    Console.WriteLine("\nPodaj ID wiersza (Row), który chcesz sprawdzić (wpisz 'wróć' aby anulować):");
+                    userInput = Console.ReadLine() ?? "";
+                    if (userInput == "wróć") continue;
 
                     if (int.TryParse(userInput, out int row) && 0 <= row && row < Items.Count)
                     {
@@ -54,20 +67,22 @@ namespace Projekt_SBD.ConsoleUserInterface.ListScreen
                     }
                     else
                     {
-                        Console.WriteLine("Given row Id was invalid.");
+                        Console.WriteLine("\nPodane ID wiersza jest nieprawidłowe. Wciśnij Enter...");
+                        Console.ReadLine();
                     }
-
                 }
-                else if (userResponse == "sort")
+                else if (userResponse == "sortuj")
                 {
-                    Console.WriteLine("Select the index of column you would like to sort by:");
-                    userInput = Console.ReadLine();
+                    Console.WriteLine("\nPodaj indeks kolumny, po której chcesz posortować (wpisz 'wróć' aby anulować):");
+                    userInput = Console.ReadLine() ?? "";
+                    if (userInput == "wróć") continue;
 
                     if (int.TryParse(userInput, out int column) && 0 <= column && column < Columns.Count)
                     {
-                        Console.WriteLine("If you want to sort the column in the ascending order, type 'asc'.\r\n" +
-                                          "If you want to sort it in the descending order, type 'desc'.");
-                        userInput = Console.ReadLine();
+                        Console.WriteLine("\nAby posortować rosnąco, wpisz 'asc'.\nAby posortować malejąco, wpisz 'desc'.\n(wpisz 'wróć' aby anulować)");
+                        userInput = Console.ReadLine() ?? "";
+                        if (userInput == "wróć") continue;
+
                         if(userInput == "asc")
                         {
                             SortByColumn(column, true);
@@ -78,24 +93,29 @@ namespace Projekt_SBD.ConsoleUserInterface.ListScreen
                         }
                         else
                         {
-                            Console.WriteLine("Given sorting order was invalid.");
+                            Console.WriteLine("\nPodany kierunek sortowania jest nieprawidłowy. Wciśnij Enter...");
+                            Console.ReadLine();
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Given column Id was invalid.");
+                        Console.WriteLine("\nPodany indeks kolumny jest nieprawidłowy. Wciśnij Enter...");
+                        Console.ReadLine();
                     }
                 }
-                else if (userResponse == "exit")
+                else if (userResponse == "reset")
+                {
+                    _items = new List<T>(OriginalItems);
+                }
+                else if (userResponse == "exit" || userResponse == "0")
                 {
                     break;
                 }
                 else
                 {
-                    Console.WriteLine("Command couldn't be recognized.\r\n" +
-                                      "In order to leave the menu, type 'exit' and press enter.");
+                    Console.WriteLine("\nNie rozpoznano komendy. Wciśnij Enter, aby kontynuować...");
+                    Console.ReadLine();
                 }
-                userResponse = Console.ReadLine();
             }
 
 
@@ -140,8 +160,8 @@ namespace Projekt_SBD.ConsoleUserInterface.ListScreen
             var column = Columns[columnIndex];
 
             var sorted = ascending
-                ? Items.OrderBy(column.GetValueFunc)
-                : Items.OrderByDescending(column.GetValueFunc);
+                ? Items.OrderBy(column.GetValueFunc).ToList()
+                : Items.OrderByDescending(column.GetValueFunc).ToList();
 
             Items.Clear();
             Items.AddRange(sorted);

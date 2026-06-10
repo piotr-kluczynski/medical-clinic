@@ -1,4 +1,4 @@
-﻿using Projekt_SBD.Data;
+using Projekt_SBD.Data;
 
 namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {
@@ -27,12 +27,11 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
             Console.WriteLine(Name);
             Console.WriteLine(Description);
 
-            Console.WriteLine("Choose an option: ");
+            Console.WriteLine("\nWybierz opcję:");
             foreach (MenuOption option in menuOptions.Values)
             {
                 option.Display();
             }
-            Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
 
             string userResponse = Console.ReadLine();
             int userChoice = 0;
@@ -48,9 +47,8 @@ namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
                 }
                 else
                 {
-                    Console.WriteLine("Command couldn't be recognized.\r\n" +
-                                      "To choose an option enter a number ranging from " + 0 + " to " + menuOptions.Count + ".\r\n" +
-                                      "In order to leave the menu, type 'exit' and press enter.");
+                    Console.WriteLine("\nNie rozpoznano komendy.\r\n" +
+                                      "Aby wybrać opcję, podaj prawidłowy numer z listy powyżej.");
                 }
                 userResponse = Console.ReadLine();
             }

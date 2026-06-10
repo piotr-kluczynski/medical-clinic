@@ -11,8 +11,8 @@ using Projekt_SBD.Data;
 namespace Projekt_SBD.Migrations
 {
     [DbContext(typeof(PrzychodniaContext))]
-    [Migration("20260522204355_TableReferences")]
-    partial class TableReferences
+    [Migration("20260609233023_HistsTables")]
+    partial class HistsTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -136,6 +136,10 @@ namespace Projekt_SBD.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
@@ -165,6 +169,10 @@ namespace Projekt_SBD.Migrations
                         .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
@@ -236,6 +244,50 @@ namespace Projekt_SBD.Migrations
                     b.ToTable("Supplies");
                 });
 
+            modelBuilder.Entity("Projekt_SBD.Models.SupplyHist", b =>
+                {
+                    b.Property<int>("HistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistId"));
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<DateTime>("ArchiveDate")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<string>("ArchiveUser")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<int>("OriginalSupplyId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int>("UsedAmount")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.HasKey("HistId");
+
+                    b.ToTable("Supplies_HIST");
+                });
+
             modelBuilder.Entity("Projekt_SBD.Models.Visit", b =>
                 {
                     b.Property<int>("Id")
@@ -266,6 +318,9 @@ namespace Projekt_SBD.Migrations
                     b.Property<DateTime>("Start")
                         .HasColumnType("TIMESTAMP(7)");
 
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("NUMBER(10)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DiagnosisId");
@@ -274,7 +329,61 @@ namespace Projekt_SBD.Migrations
 
                     b.HasIndex("RoomId");
 
+                    b.HasIndex("WorkerId");
+
                     b.ToTable("Visits");
+                });
+
+            modelBuilder.Entity("Projekt_SBD.Models.VisitHist", b =>
+                {
+                    b.Property<int>("HistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistId"));
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<DateTime>("ArchiveDate")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<string>("ArchiveUser")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<int>("Cost")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int?>("DiagnosisId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<int>("OriginalVisitId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.HasKey("HistId");
+
+                    b.ToTable("Visits_HIST");
                 });
 
             modelBuilder.Entity("Projekt_SBD.Models.Worker", b =>
@@ -294,6 +403,10 @@ namespace Projekt_SBD.Migrations
                         .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
@@ -408,11 +521,19 @@ namespace Projekt_SBD.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Projekt_SBD.Models.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Diagnosis");
 
                     b.Navigation("Patient");
 
                     b.Navigation("Room");
+
+                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("Projekt_SBD.Models.Worker", b =>

@@ -1,4 +1,4 @@
-﻿using Projekt_SBD.Data;
+using Projekt_SBD.Data;
 
 namespace Projekt_SBD.ConsoleUserInterface.DisplayScreen
 {
@@ -31,8 +31,7 @@ namespace Projekt_SBD.ConsoleUserInterface.DisplayScreen
             {
                 for (int j = 0; j < Content[i].Length; j++)
                 {
-                    Console.WriteLine(Content[i][j]);
-                    Console.Write("  ");
+                    Console.Write(Content[i][j] + "  ");
                 }
                 Console.WriteLine();
             }

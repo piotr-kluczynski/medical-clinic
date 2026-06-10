@@ -1,4 +1,4 @@
-﻿using Projekt_SBD.Data;
+using Projekt_SBD.Data;
 
 namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 {
@@ -25,14 +25,15 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
                 EnterAction.Invoke();
             }
 
-            Console.WriteLine(Name);
+            Console.WriteLine("\n" + Name.ToUpper());
             Console.WriteLine(Description);
-            Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
+            Console.WriteLine("\nAby wyjść z formularza, wpisz 'exit' i wciśnij enter.\n");
 
             foreach (FormField field in Fields) 
             {
                 field.Display();
                 string givenValue = Console.ReadLine();
+                Console.WriteLine();
                 string errorMsg = "";
                 if (givenValue == "exit")
                 {
@@ -49,10 +50,10 @@ namespace Projekt_SBD.ConsoleUserInterface.FormScreen
 
                 while (!field.Verify(out errorMsg))
                 {
-                    Console.WriteLine(errorMsg + "\r\nTry again.");
+                    Console.WriteLine("\n" + errorMsg + "\r\nSpróbuj ponownie.\n");
                     field.Display();
-                    Console.WriteLine("In order to leave the menu, type 'exit' and press enter.");
                     givenValue = Console.ReadLine();
+                    Console.WriteLine();
 
                     if (givenValue == "exit")
                     {

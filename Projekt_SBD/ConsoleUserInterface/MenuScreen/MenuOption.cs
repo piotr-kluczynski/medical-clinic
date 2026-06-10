@@ -1,4 +1,4 @@
-﻿using Projekt_SBD.Data;
+using Projekt_SBD.Data;
 
 namespace Projekt_SBD.ConsoleUserInterface.MenuScreen
 {

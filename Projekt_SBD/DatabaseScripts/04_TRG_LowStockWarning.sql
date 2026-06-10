@@ -1,4 +1,3 @@
--- Tworzenie triggera ostrzegającego o niskim stanie i archiwizującego
 CREATE OR REPLACE TRIGGER TRG_LowStockWarning
 AFTER UPDATE OR DELETE ON "Supplies"
 FOR EACH ROW
@@ -10,7 +9,6 @@ BEGIN
     IF UPDATING THEN
         v_action := 'UPDATE';
         v_used_amount := :OLD."Quantity" - :NEW."Quantity";
-        -- Blokada jeśli stan po aktualizacji schodzi poniżej 0
         IF :NEW."Quantity" < 0 THEN
             RAISE_APPLICATION_ERROR(-20004, 'Niewystarczająca ilość materiałów. Stan zapasów zablokowałby się poniżej zera.');
         END IF;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,12 +6,11 @@ namespace Projekt_SBD.Models
 {
     public class Room
     {
-        public int Id { get; set; } // Also the room number
+        public int Id { get; set; }
         public int Floor { get; set; }
-        public string Purpose { get; set; } // Change to enum later
-        public string Status { get; set; } // "Wolny" lub "Zajęty"
+        public string Purpose { get; set; }
+        public string Status { get; set; }
 
-        // Relacje departamentu
         public int DepartmentId { get; set; }
         public Department Department { get; set; }
         public ICollection<Equipment> Equipments { get; set; } = new List<Equipment>();
