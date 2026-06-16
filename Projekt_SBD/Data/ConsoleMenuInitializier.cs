@@ -217,11 +217,11 @@ namespace Projekt_SBD.Data
                     new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Reception),
                     new MenuOption(4, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Reception),
                     new MenuOption(5, "Grafik lekarzy (Zajęte terminy)", ScreensEnum.DoctorAvailabilityView_Reception),
-                    new MenuOption(6, "Umów wizytę (Procedura)", ScreensEnum.ScheduleVisitForm_Reception),
-                    new MenuOption(7, "Odwołaj wizytę (Procedura)", ScreensEnum.CancelVisitForm),
-                    new MenuOption(8, "Sprawdź braki w magazynie (Widok)", ScreensEnum.LowStockSuppliesView),
-                    new MenuOption(9, "Przyjmij dostawę materiałów (Procedura)", ScreensEnum.AddSupplyDeliveryForm),
-                    new MenuOption(10, "Wprowadź NOWY materiał do bazy", ScreensEnum.CreateNewSupplyForm),
+                    new MenuOption(6, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Reception),
+                    new MenuOption(7, "Odwołaj wizytę", ScreensEnum.CancelVisitForm),
+                    new MenuOption(8, "Sprawdź braki w magazynie", ScreensEnum.LowStockSuppliesView),
+                    new MenuOption(9, "Przyjmij dostawę materiałów", ScreensEnum.AddSupplyDeliveryForm),
+                    new MenuOption(10, "Wprowadź nowy materiał do bazy", ScreensEnum.CreateNewSupplyForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -233,8 +233,8 @@ namespace Projekt_SBD.Data
                     new MenuOption(1, "Mój grafik (Lista Wizyt)", ScreensEnum.DoctorAvailabilityView_Doctor),
                     new MenuOption(2, "Lista pacjentów", ScreensEnum.PatientList_Doctor),
                     new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Doctor),
-                    new MenuOption(4, "Historia Medyczna Pacjenta (Widok)", ScreensEnum.DoctorPatientHistoryForm),
-                    new MenuOption(5, "Zużyj materiał do zabiegu (Procedura)", ScreensEnum.ConsumeSupplyForm),
+                    new MenuOption(4, "Historia Medyczna Pacjenta", ScreensEnum.DoctorPatientHistoryForm),
+                    new MenuOption(5, "Zużyj materiał do zabiegu", ScreensEnum.ConsumeSupplyForm),
                     new MenuOption(6, "Zakończ wizytę (Dodaj Diagnozę)", ScreensEnum.CompleteVisitForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
