@@ -20,7 +20,7 @@ Aby uruchomić projekt na swoim środowisku lokalnym, musisz posiadać:
 
 1.  **.NET 10.0 SDK** (lub nowszy)
 2.  **Docker Desktop** (do uruchomienia kontenera z bazą Oracle)
-3.  Dowolne narzędzie do obsługi Oracle (np. **DBeaver**, **DataGrip** lub **Oracle SQL Developer**)
+3.  **Oracle SQL Developer** (do wygodnego zarządzania bazą)
 4.  Edytor kodu (zalecane: **Visual Studio 2022** lub **JetBrains Rider**)
 
 ---
@@ -48,16 +48,18 @@ docker run -d --name oracle-db -p 1521:1521 -e ORACLE_PASSWORD=Admin123 gvenzl/o
 
 ### 3. Utworzenie Użytkownika i Schematu w Oracle
 
-Zanim wykonasz migracje, musisz stworzyć dedykowanego użytkownika dla przychodni. 
-Połącz się z utworzoną bazą danych poprzez DataGrip / DBeaver na poświadczenia administratorskie:
+Zanim wykonasz migracje w C#, musisz stworzyć dedykowanego użytkownika w bazie. 
+Połącz się z utworzoną bazą danych poprzez **Oracle SQL Developer** na poświadczenia administratorskie:
 *   **Host:** `localhost`
 *   **Port:** `1521`
 *   **SID/Service Name:** `FREEPDB1` (lub `FREE`)
-*   **User:** `SYS`
+*   **User:** `SYSTEM`
 *   **Password:** `Admin123`
-*   **Rola:** `SYSDBA`
+*   **Rola:** Domyślna (lub `SYSDBA`)
 
-Następnie otwórz i wykonaj plik `DatabaseScripts/00_Administrator.sql`. Skrypt ten utworzy użytkownika `Administrator` i nada mu odpowiednie uprawnienia.
+Następnie otwórz i wykonaj plik `DatabaseScripts/00_Administrator.sql`. Skrypt ten utworzy użytkownika `Administrator` i nada mu odpowiednie uprawnienia, na których będzie pracować aplikacja.
+
+> **Uwaga:** Pozostałe skrypty z folderu `DatabaseScripts` (od 01 do 07) uruchomisz **DOPIERO PO** wykonaniu migracji EF Core w Kroku 4, ponieważ wymagają one istnienia tabel!
 
 ### 4. Wykonanie Migracji EF Core
 
@@ -76,12 +78,12 @@ Update-Database
 
 ### 5. Kompilacja logiki PL/SQL (Pakiety, Triggery)
 
-Po utworzeniu tabel musisz wgrać logikę biznesową przychodni (procedury rejestracji, audyty, logi).
-Zaloguj się do bazy używając nowo utworzonego konta:
+Po utworzeniu tabel przez Entity Framework, musisz wgrać logikę biznesową przychodni (procedury rejestracji, pakiety, wyzwalacze).
+Połącz się ponownie w **Oracle SQL Developer**, ale tym razem używając nowo utworzonego konta przychodni:
 *   **User:** `Administrator`
 *   **Password:** `Admin123`
 
-I wykonaj po kolei zawartość wszystkich plików od `01` do `07` znajdujących się w folderze `DatabaseScripts/`.
+Teraz otwórz i wykonaj po kolei zawartość wszystkich pozostałych skryptów SQL z folderu `DatabaseScripts/` (czyli pliki `01`, `02`, `03`, `04`, `05`, `06`, `07`). To absolutnie kluczowe, ponieważ na nich opiera się logika aplikacji!
 
 ### 6. Uruchomienie Aplikacji
 
