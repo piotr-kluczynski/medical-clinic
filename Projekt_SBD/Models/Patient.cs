@@ -11,6 +11,7 @@ namespace Projekt_SBD.Models
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public string? Pesel { get; set; }
         public string PasswordHash { get; set; }
         public int? RelatedPatientId { get; set; }
         public Patient RelatedPatient { get; set; }

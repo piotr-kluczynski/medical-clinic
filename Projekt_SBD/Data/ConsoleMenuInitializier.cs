@@ -104,16 +104,16 @@ namespace Projekt_SBD.Data
 
                     using var context = new PrzychodniaContext();
                     
-                    var worker = context.Workers.FirstOrDefault(w => w.Email == email && w.PasswordHash == password);
-                    if (worker != null)
+                    var worker = context.Workers.FirstOrDefault(w => w.Email == email);
+                    if (worker != null && BCrypt.Net.BCrypt.Verify(password, worker.PasswordHash))
                     {
                         Session.CurrentWorker = worker;
                         Session.CurrentPatient = null;
                         return;
                     }
 
-                    var patient = context.Patients.FirstOrDefault(p => p.Email == email && p.PasswordHash == password);
-                    if (patient != null)
+                    var patient = context.Patients.FirstOrDefault(p => p.Email == email);
+                    if (patient != null && BCrypt.Net.BCrypt.Verify(password, patient.PasswordHash))
                     {
                         Session.CurrentPatient = patient;
                         Session.CurrentWorker = null;
@@ -156,7 +156,8 @@ namespace Projekt_SBD.Data
                     new FormField(1, "Nazwisko", "Wymagane", RegexUtilities.IsValidName),
                     new FormField(2, "Telefon", "Format międzynarodowy", RegexUtilities.IsValidPhoneNumber),
                     new FormField(3, "Email", "Wymagane", RegexUtilities.IsValidEmail),
-                    new FormField(4, "Hasło", "Minimum 4 znaki", RegexUtilities.IsValidPassword)
+                    new FormField(4, "PESEL", "11 cyfr", RegexUtilities.IsValidPesel),
+                    new FormField(5, "Hasło", "Minimum 4 znaki", RegexUtilities.IsValidPassword)
                 ],
                 ScreensEnum.MainMenu,
                 ScreensEnum.MainMenu,
@@ -169,7 +170,8 @@ namespace Projekt_SBD.Data
                         LastName = formFields[1].Value,
                         Phone = formFields[2].Value,
                         Email = formFields[3].Value,
-                        PasswordHash = formFields[4].Value
+                        Pesel = formFields[4].Value,
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(formFields[5].Value)
                     };
                     context.Patients.Add(newPatient);
                     context.SaveChanges();
@@ -493,9 +495,10 @@ namespace Projekt_SBD.Data
                     new FormField(2, "Stanowisko", "np. Lekarz, Administrator, Recepcja", _ => true),
                     new FormField(3, "Telefon", "", _ => true),
                     new FormField(4, "Email", "", _ => true),
-                    new FormField(5, "Hasło", "", _ => true),
-                    new FormField(6, "Wynagrodzenie", "Podaj miesięczną pensję w PLN (np. 15000)", _ => true),
-                    new FormField(7, "ID Pokoju", "Dla lekarza wymagane, dla reszty opcjonalne (wpisz ID lub zostaw puste)", _ => true)
+                    new FormField(5, "PESEL", "11 cyfr", RegexUtilities.IsValidPesel),
+                    new FormField(6, "Hasło", "", _ => true),
+                    new FormField(7, "Wynagrodzenie", "Podaj miesięczną pensję w PLN (np. 15000)", _ => true),
+                    new FormField(8, "ID Pokoju", "Dla lekarza wymagane, dla reszty opcjonalne (wpisz ID lub zostaw puste)", _ => true)
                 ],
                 ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
                 (f) => {
@@ -512,11 +515,12 @@ namespace Projekt_SBD.Data
                             Position = f[2].Value,
                             Phone = f[3].Value,
                             Email = f[4].Value,
-                            PasswordHash = f[5].Value,
-                            Salary = int.TryParse(f[6].Value, out int s) ? s : 0
+                            Pesel = f[5].Value,
+                            PasswordHash = BCrypt.Net.BCrypt.HashPassword(f[6].Value),
+                            Salary = int.TryParse(f[7].Value, out int s) ? s : 0
                         };
 
-                        string roomIdStr = f[7].Value;
+                        string roomIdStr = f[8].Value;
                         if (!string.IsNullOrWhiteSpace(roomIdStr) && int.TryParse(roomIdStr, out int rId)) {
                             var room = ctx.Rooms.FirstOrDefault(r => r.Id == rId);
                             if (room == null) {
@@ -698,6 +702,7 @@ namespace Projekt_SBD.Data
                     new ListColumn<Worker>("ID", w => w.Id.ToString()),
                     new ListColumn<Worker>("Imię", w => w.FirstName),
                     new ListColumn<Worker>("Nazwisko", w => w.LastName),
+                    new ListColumn<Worker>("PESEL", w => w.Pesel ?? "Brak"),
                     new ListColumn<Worker>("Stanowisko", w => w.Position),
                     new ListColumn<Worker>("Telefon", w => w.Phone)
                 ],
@@ -715,6 +720,7 @@ namespace Projekt_SBD.Data
                     new ListColumn<Patient>("ID", p => p.Id.ToString()),
                     new ListColumn<Patient>("Imię", p => p.FirstName),
                     new ListColumn<Patient>("Nazwisko", p => p.LastName),
+                    new ListColumn<Patient>("PESEL", p => string.IsNullOrEmpty(p.Pesel) ? "Brak" : (p.Pesel.Length == 11 ? p.Pesel.Substring(0, 6) + "*****" : "*****")),
                     new ListColumn<Patient>("Telefon", p => p.Phone),
                     new ListColumn<Patient>("Email", p => p.Email)
                 ],
@@ -732,6 +738,7 @@ namespace Projekt_SBD.Data
                     new ListColumn<Patient>("ID", p => p.Id.ToString()),
                     new ListColumn<Patient>("Imię", p => p.FirstName),
                     new ListColumn<Patient>("Nazwisko", p => p.LastName),
+                    new ListColumn<Patient>("PESEL", p => string.IsNullOrEmpty(p.Pesel) ? "Brak" : (p.Pesel.Length == 11 ? p.Pesel.Substring(0, 6) + "*****" : "*****")),
                     new ListColumn<Patient>("Telefon", p => p.Phone)
                 ],
                 () => {

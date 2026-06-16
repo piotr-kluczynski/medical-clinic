@@ -10,6 +10,7 @@ Aplikacja została zbudowana w oparciu o architekturę **C# Console Application 
 *   **Microsoft.EntityFrameworkCore (v10.0.8)** - Główny system ORM do komunikacji z bazą.
 *   **Oracle.EntityFrameworkCore (v10.23.26200)** - Oficjalny dostawca bazy danych Oracle dla Entity Framework.
 *   **Microsoft.EntityFrameworkCore.Tools & Design (v10.0.8)** - Narzędzia wspierające migracje z poziomu konsoli.
+*   **BCrypt.Net-Next (v4.2.0)** - Zaawansowana biblioteka kryptograficzna używana do bezpiecznego hashowania oraz weryfikacji haseł użytkowników.
 *   **Oracle Database 23c Free (Docker)** - Silnik bazy danych wykorzystywany do przechowywania i przetwarzania logiki PL/SQL (Trigger, View, Packages).
 
 ---

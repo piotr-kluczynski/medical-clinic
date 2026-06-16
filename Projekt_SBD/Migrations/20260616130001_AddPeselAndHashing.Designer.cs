@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using Projekt_SBD.Data;
@@ -11,9 +12,11 @@ using Projekt_SBD.Data;
 namespace Projekt_SBD.Migrations
 {
     [DbContext(typeof(PrzychodniaContext))]
-    partial class PrzychodniaContextModelSnapshot : ModelSnapshot
+    [Migration("20260616130001_AddPeselAndHashing")]
+    partial class AddPeselAndHashing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

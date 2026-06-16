@@ -42,13 +42,19 @@ namespace Projekt_SBD.Data
                     FirstName = "Jan",
                     LastName = "Kowalski", 
                     Email = "jan.kowalski@przychodnia.pl",
-                    PasswordHash = "Admin123",
+                    Pesel = "80010112345",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     Phone = "111222333", 
                     Position = "Cardiologist", 
                     Salary = 15000, 
                     RoomId = room.Id 
                 };
                 context.Workers.Add(doctor);
+            }
+            else if (!doctor.PasswordHash.StartsWith("$2a$"))
+            {
+                doctor.Pesel = "80010112345";
+                doctor.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123");
             }
 
             var nurse = context.Workers.FirstOrDefault(w => w.Email == "anna.nowak@przychodnia.pl");
@@ -59,12 +65,18 @@ namespace Projekt_SBD.Data
                     FirstName = "Anna", 
                     LastName = "Nowak", 
                     Email = "anna.nowak@przychodnia.pl",
-                    PasswordHash = "Admin123",
+                    Pesel = "85020223456",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     Phone = "444555666", 
                     Position = "Nurse", 
                     Salary = 6000 
                 };
                 context.Workers.Add(nurse);
+            }
+            else if (!nurse.PasswordHash.StartsWith("$2a$"))
+            {
+                nurse.Pesel = "85020223456";
+                nurse.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123");
             }
 
             var admin = context.Workers.FirstOrDefault(w => w.Email == "admin@przychodnia.pl");
@@ -75,12 +87,18 @@ namespace Projekt_SBD.Data
                     FirstName = "Szef", 
                     LastName = "Kliniki", 
                     Email = "admin@przychodnia.pl",
-                    PasswordHash = "Admin123",
+                    Pesel = "70030334567",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     Phone = "000000000", 
                     Position = "Administrator", 
                     Salary = 20000 
                 };
                 context.Workers.Add(admin);
+            }
+            else if (!admin.PasswordHash.StartsWith("$2a$"))
+            {
+                admin.Pesel = "70030334567";
+                admin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123");
             }
 
             var reception = context.Workers.FirstOrDefault(w => w.Email == "recepcja@przychodnia.pl");
@@ -91,12 +109,18 @@ namespace Projekt_SBD.Data
                     FirstName = "Basia", 
                     LastName = "Z-Recepcji", 
                     Email = "recepcja@przychodnia.pl",
-                    PasswordHash = "Admin123",
+                    Pesel = "95040445678",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     Phone = "123123123", 
                     Position = "Reception", 
                     Salary = 5000 
                 };
                 context.Workers.Add(reception);
+            }
+            else if (!reception.PasswordHash.StartsWith("$2a$"))
+            {
+                reception.Pesel = "95040445678";
+                reception.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123");
             }
 
             context.SaveChanges();
@@ -109,10 +133,17 @@ namespace Projekt_SBD.Data
                     FirstName = "Michał", 
                     LastName = "Testowy", 
                     Email = "michal@test.pl",
-                    PasswordHash = "Admin123",
+                    Pesel = "99050556789",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     Phone = "999888777" 
                 };
                 context.Patients.Add(patient);
+                context.SaveChanges();
+            }
+            else if (!patient.PasswordHash.StartsWith("$2a$"))
+            {
+                patient.Pesel = "99050556789";
+                patient.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123");
                 context.SaveChanges();
             }
 

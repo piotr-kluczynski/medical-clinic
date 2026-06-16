@@ -8,6 +8,13 @@ namespace Projekt_SBD.Utilities
 {
     class RegexUtilities
     {
+        public static bool IsValidPesel(string pesel)
+        {
+            if (string.IsNullOrWhiteSpace(pesel))
+                return false;
+            return Regex.IsMatch(pesel.Trim(), @"^\d{11}$");
+        }
+
         public static bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
