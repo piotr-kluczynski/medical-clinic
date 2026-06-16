@@ -30,6 +30,7 @@ namespace Projekt_SBD.Data
         CancelVisitForm,
         ConsumeSupplyForm,
         AddSupplyDeliveryForm,
+        CreateNewSupplyForm,
         MonthlyCostsForm,
 
         PatientList_Reception,
@@ -46,6 +47,7 @@ namespace Projekt_SBD.Data
         DepartmentList,
         RoomList_Admin,
         VisitList_Reception,
+        VisitList_Patient,
         DoctorList_Patient,
         DoctorList_Reception,
         
@@ -58,7 +60,9 @@ namespace Projekt_SBD.Data
         ScheduleVisitForm_Reception,
         ScheduleVisitForm_Patient,
         DoctorPatientHistoryForm,
+        CompleteVisitForm,
         AddWorkerForm,
+        AddEquipmentForm,
         SuppliesUsageReportForm,
         CalculateAssetsValueScreen
     }
@@ -180,9 +184,10 @@ namespace Projekt_SBD.Data
                 ScreensEnum.PatientMenu, "Panel Pacjenta", "Witaj w swoim panelu!", ScreensEnum.MainMenu,
                 [
                     new MenuOption(1, "Moja historia medyczna", ScreensEnum.MyMedicalHistoryView),
-                    new MenuOption(2, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Patient),
-                    new MenuOption(3, "Sprawdź zajęte terminy", ScreensEnum.DoctorAvailabilityView_Patient),
-                    new MenuOption(4, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
+                    new MenuOption(2, "Moje zaplanowane wizyty", ScreensEnum.VisitList_Patient),
+                    new MenuOption(3, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Patient),
+                    new MenuOption(4, "Sprawdź zajęte terminy", ScreensEnum.DoctorAvailabilityView_Patient),
+                    new MenuOption(5, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -192,12 +197,13 @@ namespace Projekt_SBD.Data
                 ScreensEnum.AdminMenu, "Panel Administratora", "Zarządzanie personelem i raportami.", ScreensEnum.MainMenu,
                 [
                     new MenuOption(1, "Dodaj nowego pracownika", ScreensEnum.AddWorkerForm),
-                    new MenuOption(2, "Lista pracowników", ScreensEnum.StaffList),
-                    new MenuOption(3, "Lista pokoi", ScreensEnum.RoomList_Admin),
-                    new MenuOption(4, "Lista materiałów", ScreensEnum.SupplyList_Admin),
-                    new MenuOption(5, "Raport kosztów operacyjnych", ScreensEnum.MonthlyCostsForm),
-                    new MenuOption(6, "Raport zużycia materiałów", ScreensEnum.SuppliesUsageReportForm),
-                    new MenuOption(7, "Wylicz łączną wartość majątku", ScreensEnum.CalculateAssetsValueScreen),
+                    new MenuOption(2, "Dodaj nowy sprzęt medyczny", ScreensEnum.AddEquipmentForm),
+                    new MenuOption(3, "Lista pracowników", ScreensEnum.StaffList),
+                    new MenuOption(4, "Lista pokoi", ScreensEnum.RoomList_Admin),
+                    new MenuOption(5, "Lista materiałów", ScreensEnum.SupplyList_Admin),
+                    new MenuOption(6, "Raport kosztów operacyjnych", ScreensEnum.MonthlyCostsForm),
+                    new MenuOption(7, "Raport zużycia materiałów", ScreensEnum.SuppliesUsageReportForm),
+                    new MenuOption(8, "Wylicz łączną wartość majątku", ScreensEnum.CalculateAssetsValueScreen),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -215,6 +221,7 @@ namespace Projekt_SBD.Data
                     new MenuOption(7, "Odwołaj wizytę (Procedura)", ScreensEnum.CancelVisitForm),
                     new MenuOption(8, "Sprawdź braki w magazynie (Widok)", ScreensEnum.LowStockSuppliesView),
                     new MenuOption(9, "Przyjmij dostawę materiałów (Procedura)", ScreensEnum.AddSupplyDeliveryForm),
+                    new MenuOption(10, "Wprowadź NOWY materiał do bazy", ScreensEnum.CreateNewSupplyForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -228,6 +235,7 @@ namespace Projekt_SBD.Data
                     new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Doctor),
                     new MenuOption(4, "Historia Medyczna Pacjenta (Widok)", ScreensEnum.DoctorPatientHistoryForm),
                     new MenuOption(5, "Zużyj materiał do zabiegu (Procedura)", ScreensEnum.ConsumeSupplyForm),
+                    new MenuOption(6, "Zakończ wizytę (Dodaj Diagnozę)", ScreensEnum.CompleteVisitForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -238,8 +246,10 @@ namespace Projekt_SBD.Data
                 [
                     new FormField(0, "ID Pacjenta", "", _ => true),
                     new FormField(1, "ID Lekarza", "Sprawdź w Grafiku Lekarzy", _ => true),
-                    new FormField(2, "Cel wizyty", "", _ => true),
-                    new FormField(3, "Koszt", "", _ => true)
+                    new FormField(2, "Data wizyty (RRRR-MM-DD)", "", _ => true),
+                    new FormField(3, "Godzina (GG:MM)", "Dostępne od 07:00 do 19:30", _ => true),
+                    new FormField(4, "Cel wizyty", "", _ => true),
+                    new FormField(5, "Koszt", "", _ => true)
                 ],
                 ScreensEnum.ReceptionMenu,
                 ScreensEnum.ReceptionMenu,
@@ -260,11 +270,27 @@ namespace Projekt_SBD.Data
                             return;
                         }
 
+                        DateTime start;
+                        try {
+                            start = DateTime.ParseExact(formFields[2].Value + " " + formFields[3].Value, "yyyy-MM-dd HH:mm", null);
+                        } catch {
+                            Console.WriteLine("\nBłąd: Nieprawidłowy format daty lub godziny.");
+                            Console.ReadKey();
+                            return;
+                        }
+
+                        TimeSpan time = start.TimeOfDay;
+                        if (time < new TimeSpan(7, 0, 0) || time > new TimeSpan(19, 30, 0)) {
+                            Console.WriteLine("\nBłąd: Godzina wizyty musi mieścić się w przedziale od 07:00 do 19:30 (Przychodnia czynna do 20:00).");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var srv = new ClinicService(context);
                         srv.ScheduleVisitAsync(
                             int.Parse(formFields[0].Value), workerId, doctor.RoomId.Value,
-                            DateTime.Now.AddDays(1), DateTime.Now.AddDays(1).AddHours(1),
-                            formFields[2].Value, int.Parse(formFields[3].Value)
+                            start, start.AddMinutes(30),
+                            formFields[4].Value, int.Parse(formFields[5].Value)
                         ).Wait();
                         Console.WriteLine("Procedura wykonana pomyślnie. Zapisano w bazie.");
                     } catch (Exception ex) {
@@ -277,7 +303,9 @@ namespace Projekt_SBD.Data
             screens.Add(new Form(ScreensEnum.ScheduleVisitForm_Patient, "Umów Wizytę (Pacjent)", "Zapełnij dane do procedury ScheduleVisit",
                 [
                     new FormField(0, "ID Lekarza", "Sprawdź w dostępności lekarzy (np. 1)", _ => true),
-                    new FormField(1, "Cel wizyty", "Opisz powód", _ => true)
+                    new FormField(1, "Data wizyty (RRRR-MM-DD)", "", _ => true),
+                    new FormField(2, "Godzina (GG:MM)", "Dostępne od 07:00 do 19:30", _ => true),
+                    new FormField(3, "Cel wizyty", "Opisz powód", _ => true)
                 ],
                 ScreensEnum.PatientMenu,
                 ScreensEnum.PatientMenu,
@@ -298,16 +326,74 @@ namespace Projekt_SBD.Data
                             return;
                         }
 
+                        DateTime start;
+                        try {
+                            start = DateTime.ParseExact(formFields[1].Value + " " + formFields[2].Value, "yyyy-MM-dd HH:mm", null);
+                        } catch {
+                            Console.WriteLine("\nBłąd: Nieprawidłowy format daty lub godziny.");
+                            Console.ReadKey();
+                            return;
+                        }
+
+                        TimeSpan time = start.TimeOfDay;
+                        if (time < new TimeSpan(7, 0, 0) || time > new TimeSpan(19, 30, 0)) {
+                            Console.WriteLine("\nBłąd: Godzina wizyty musi mieścić się w przedziale od 07:00 do 19:30 (Przychodnia czynna do 20:00).");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var srv = new ClinicService(context);
                         srv.ScheduleVisitAsync(
                             Session.CurrentPatient.Id, workerId, doctor.RoomId.Value,
-                            DateTime.Now.AddDays(1), DateTime.Now.AddDays(1).AddHours(1),
-                            formFields[1].Value, 100
+                            start, start.AddMinutes(30),
+                            formFields[3].Value, 100
                         ).Wait();
                         Console.WriteLine("Procedura wykonana pomyślnie. Udało się umówić wizytę.");
                     } catch (Exception ex) {
                         Console.WriteLine("Błąd Oracle: " + ex.Message);
                     }
+                    Console.ReadKey();
+                }
+            ));
+
+            screens.Add(new Form(ScreensEnum.CompleteVisitForm, "Zakończ wizytę (Dodaj diagnozę)", "Dodaje diagnozę i podczepia pod wizytę.",
+                [
+                    new FormField(0, "ID Wizyty", "Wpisz ID wizyty z Twojego grafiku", _ => true),
+                    new FormField(1, "Objawy", "np. Gorączka, ból gardła", _ => true),
+                    new FormField(2, "Rozpoznanie", "np. Zapalenie gardła", _ => true)
+                ],
+                ScreensEnum.DoctorMenu, ScreensEnum.DoctorMenu,
+                (f) => {
+                    try {
+                        using var ctx = new PrzychodniaContext();
+                        var visitId = int.Parse(f[0].Value);
+                        var visit = ctx.Visits.FirstOrDefault(v => v.Id == visitId);
+                        if (visit == null) {
+                            Console.WriteLine("\nBłąd: Nie znaleziono takiej wizyty.");
+                            Console.ReadKey();
+                            return;
+                        }
+                        if (visit.WorkerId != Session.CurrentWorker?.Id) {
+                            Console.WriteLine("\nBłąd: Ta wizyta nie należy do Ciebie!");
+                            Console.ReadKey();
+                            return;
+                        }
+                        
+                        var diagnosis = new Diagnosis {
+                            DiagnosisTime = DateTime.Now,
+                            Symptoms = f[1].Value,
+                            Illness = f[2].Value,
+                            PatientId = visit.PatientId,
+                            WorkerId = visit.WorkerId
+                        };
+                        ctx.Diagnosis.Add(diagnosis);
+                        ctx.SaveChanges();
+
+                        visit.DiagnosisId = diagnosis.Id;
+                        ctx.SaveChanges();
+
+                        Console.WriteLine("Pomyślnie dodano diagnozę! Wizyta została zakończona.");
+                    } catch(Exception e) { Console.WriteLine("Błąd: " + e.Message); }
                     Console.ReadKey();
                 }
             ));
@@ -351,6 +437,40 @@ namespace Projekt_SBD.Data
                 }
             ));
 
+            screens.Add(new Form(ScreensEnum.CreateNewSupplyForm, "Wprowadź nowy materiał do bazy", "Tworzy nowy wpis Supply",
+                [ 
+                    new FormField(0, "Nazwa materiału", "np. Gaza jałowa", _ => true), 
+                    new FormField(1, "Opis", "np. 1x1m", _ => true),
+                    new FormField(2, "Ilość początkowa", "np. 100", _ => true),
+                    new FormField(3, "ID Pokoju", "Wpisz ID z listy powyżej", _ => true)
+                ],
+                ScreensEnum.ReceptionMenu, ScreensEnum.ReceptionMenu,
+                (f) => {
+                    try {
+                        using var ctx = new PrzychodniaContext();
+                        var supply = new Supply {
+                            Name = f[0].Value,
+                            Description = f[1].Value,
+                            Quantity = int.Parse(f[2].Value),
+                            RoomId = int.Parse(f[3].Value)
+                        };
+                        ctx.Supplies.Add(supply);
+                        ctx.SaveChanges();
+                        Console.WriteLine($"\nSukces! Dodano nowy materiał do bazy! ID przedmiotu to: {supply.Id}");
+                    } catch(Exception e) { Console.WriteLine("\nBłąd: Upewnij się, że podałeś prawidłowe ID Pokoju i parametry! " + e.Message); }
+                    Console.ReadKey();
+                },
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var rooms = ctx.Rooms.Include(r => r.Department).ToList();
+                    Console.WriteLine("\n=== DOSTĘPNE POKOJE W KLINICE ===");
+                    foreach(var r in rooms) {
+                        Console.WriteLine($"[ID: {r.Id}] {r.Purpose} -> Oddział: {r.Department?.Name}");
+                    }
+                    Console.WriteLine("=================================");
+                }
+            ));
+
             screens.Add(new Form(ScreensEnum.MonthlyCostsForm, "Raport Kosztów", "Funkcja MonthlyCosts (REF CURSOR)",
                 [ new FormField(0, "Rok (np. 2026)", "", _ => true), new FormField(1, "Miesiąc (1-12)", "", _ => true) ],
                 ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
@@ -381,6 +501,11 @@ namespace Projekt_SBD.Data
                 (f) => {
                     try {
                         using var ctx = new PrzychodniaContext();
+                        if (ctx.Workers.Any(w => w.Email == f[4].Value)) {
+                            Console.WriteLine("\nBłąd: Pracownik z takim adresem e-mail już istnieje w bazie!");
+                            Console.ReadKey();
+                            return;
+                        }
                         var worker = new Worker {
                             FirstName = f[0].Value,
                             LastName = f[1].Value,
@@ -416,6 +541,45 @@ namespace Projekt_SBD.Data
                         Console.WriteLine("\nDodano pracownika pomyślnie! " + (worker.RoomId != null ? "Zaktualizowano status pokoju na Zajęty." : ""));
                     } catch(Exception e) { Console.WriteLine("Błąd EF: " + e.Message); }
                     Console.ReadKey();
+                }
+            ));
+
+            screens.Add(new Form(ScreensEnum.AddEquipmentForm, "Dodaj nowy sprzęt medyczny", "Tworzy nowy wpis Equipment",
+                [
+                    new FormField(0, "Nazwa sprzętu", "np. Aparat USG", _ => true),
+                    new FormField(1, "Opis", "np. Model XYZ", _ => true),
+                    new FormField(2, "Stan", "np. Nowy, Używany", _ => true),
+                    new FormField(3, "Wartość (PLN)", "np. 50000", _ => true),
+                    new FormField(4, "Data zakupu (RRRR-MM-DD)", "np. 2026-06-15", _ => true),
+                    new FormField(5, "ID Pokoju", "Wpisz ID z listy powyżej", _ => true)
+                ],
+                ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
+                (f) => {
+                    try {
+                        using var ctx = new PrzychodniaContext();
+                        var eq = new Equipment {
+                            Name = f[0].Value,
+                            Description = f[1].Value,
+                            Condition = f[2].Value,
+                            Value = int.TryParse(f[3].Value, out int val) ? val : 0,
+                            PurchaseDate = DateTime.ParseExact(f[4].Value, "yyyy-MM-dd", null),
+                            LastInspection = DateTime.Now,
+                            RoomId = int.Parse(f[5].Value)
+                        };
+                        ctx.Equipment.Add(eq);
+                        ctx.SaveChanges();
+                        Console.WriteLine($"\nSukces! Dodano nowy sprzęt do bazy! ID to: {eq.Id}");
+                    } catch(Exception e) { Console.WriteLine("\nBłąd: Upewnij się, że podałeś prawidłowe dane! " + e.Message); }
+                    Console.ReadKey();
+                },
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var rooms = ctx.Rooms.Include(r => r.Department).ToList();
+                    Console.WriteLine("\n=== DOSTĘPNE POKOJE W KLINICE ===");
+                    foreach(var r in rooms) {
+                        Console.WriteLine($"[ID: {r.Id}] {r.Purpose} -> Oddział: {r.Department?.Name}");
+                    }
+                    Console.WriteLine("=================================");
                 }
             ));
 
@@ -493,9 +657,23 @@ namespace Projekt_SBD.Data
                 printDoctorAvailability
             ));
 
-            screens.Add(new Menu(ScreensEnum.DoctorAvailabilityView_Doctor, "Mój Grafik (Widok Oracle)", "Podgląd z v_DoctorAvailability", ScreensEnum.DoctorMenu, 
-                [ new MenuOption(0, "Wróć", ScreensEnum.DoctorMenu) ], 
-                printDoctorAvailability
+            screens.Add(new ConsoleList<Visit>(
+                ScreensEnum.DoctorAvailabilityView_Doctor, "Mój Grafik (Moje wizyty)", "Oczekujący pacjenci (bez diagnozy)", ScreensEnum.DoctorMenu, 
+                null, new List<Visit>(), 
+                [
+                    new ListColumn<Visit>("ID Wizyty", v => v.Id.ToString()),
+                    new ListColumn<Visit>("ID Pacjenta", v => v.PatientId.ToString()),
+                    new ListColumn<Visit>("Cel wizyty", v => v.Purpose),
+                    new ListColumn<Visit>("Data", v => v.Start.ToString("yyyy-MM-dd HH:mm")),
+                    new ListColumn<Visit>("Koniec", v => v.End.ToString("HH:mm"))
+                ],
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.DoctorAvailabilityView_Doctor) as ConsoleList<Visit>;
+                    if(Session.CurrentWorker != null) {
+                        listScreen.Items = ctx.Visits.Where(v => v.WorkerId == Session.CurrentWorker.Id && v.DiagnosisId == null).OrderBy(v => v.Start).ToList();
+                    }
+                }
             ));
 
             screens.Add(new Menu(ScreensEnum.LowStockSuppliesView, "Braki w Magazynie (Widok Oracle)", "Podgląd z v_LowStockSupplies", ScreensEnum.ReceptionMenu, 
@@ -503,8 +681,12 @@ namespace Projekt_SBD.Data
                 () => {
                     using var ctx = new PrzychodniaContext();
                     var data = new ClinicService(ctx).GetLowStockSuppliesViewAsync().Result;
-                    Console.WriteLine("\nUWAGA! NISKI STAN");
-                    foreach (var d in data) Console.WriteLine($"Id: {d.SupplyId}, Sprzęt: {d.SupplyName}, Sztuk: {d.Quantity}, Gdzie: Pokój {d.RoomNumber} ({d.RoomName})");
+                    if (!data.Any()) {
+                        Console.WriteLine("\nSukces! Wszystkie stany magazynowe w normie. Brak przedmiotów poniżej 10 sztuk.");
+                    } else {
+                        Console.WriteLine("\nUWAGA! NISKI STAN (Poniżej 10 sztuk)");
+                        foreach (var d in data) Console.WriteLine($"Id: {d.SupplyId}, Sprzęt: {d.SupplyName}, Sztuk: {d.Quantity}, Gdzie: Pokój {d.RoomNumber} ({d.RoomName})");
+                    }
                     Console.WriteLine();
                 }
             ));
@@ -612,6 +794,25 @@ namespace Projekt_SBD.Data
                     using var ctx = new PrzychodniaContext();
                     var listScreen = screens.First(s => s.Id == ScreensEnum.VisitList_Reception) as ConsoleList<Visit>;
                     listScreen.Items = ctx.Visits.ToList();
+                }
+            ));
+
+            screens.Add(new ConsoleList<Visit>(
+                ScreensEnum.VisitList_Patient, "Moje zaplanowane wizyty", "Twoje nadchodzące i przeszłe wizyty", ScreensEnum.PatientMenu, 
+                null, new List<Visit>(), 
+                [
+                    new ListColumn<Visit>("ID Wizyty", v => v.Id.ToString()),
+                    new ListColumn<Visit>("Lekarz ID", v => v.WorkerId.ToString()),
+                    new ListColumn<Visit>("Cel wizyty", v => v.Purpose),
+                    new ListColumn<Visit>("Data", v => v.Start.ToString("yyyy-MM-dd HH:mm")),
+                    new ListColumn<Visit>("Koszt", v => v.Cost.ToString())
+                ],
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var listScreen = screens.First(s => s.Id == ScreensEnum.VisitList_Patient) as ConsoleList<Visit>;
+                    if(Session.CurrentPatient != null) {
+                        listScreen.Items = ctx.Visits.Where(v => v.PatientId == Session.CurrentPatient.Id).OrderBy(v => v.Start).ToList();
+                    }
                 }
             ));
 
