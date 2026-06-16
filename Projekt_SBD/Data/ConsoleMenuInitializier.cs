@@ -541,7 +541,7 @@ namespace Projekt_SBD.Data
                                 return;
                             }
                             worker.RoomId = rId;
-                            room.Status = "Zajęty"; // Aktualizujemy status pokoju na Zajęty
+                            room.Status = "Zajęty"; 
                         } else {
                             string pos = f[2].Value.ToLower();
                             var excludedPositions = new[] { "administrator", "owner", "reception", "nurse", "recepcja", "pielęgniarka", "właściciel" };
