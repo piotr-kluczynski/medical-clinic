@@ -59,7 +59,7 @@ Połącz się z utworzoną bazą danych poprzez **Oracle SQL Developer** na poś
 
 Następnie otwórz i wykonaj plik `DatabaseScripts/00_Administrator.sql`. Skrypt ten utworzy użytkownika `Administrator` i nada mu odpowiednie uprawnienia, na których będzie pracować aplikacja.
 
-> **Uwaga:** Pozostałe skrypty z folderu `DatabaseScripts` (od 01 do 07) uruchomisz **DOPIERO PO** wykonaniu migracji EF Core w Kroku 4, ponieważ wymagają one istnienia tabel!
+> **Uwaga:** Pozostałe skrypty z folderu `DatabaseScripts` (od 01 do 07) uruchom dopiero po wykonaniu migracji EF Core w Kroku 4, ponieważ wymagają one istnienia tabel.
 
 ### 4. Wykonanie Migracji EF Core
 
