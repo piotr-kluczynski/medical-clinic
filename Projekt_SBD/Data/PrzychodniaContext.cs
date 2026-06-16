@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Projekt_SBD.Models;
 
 namespace Projekt_SBD.Data
 {
     public class PrzychodniaContext : DbContext
     {
+        public PrzychodniaContext() { }
+        
+        public PrzychodniaContext(DbContextOptions<PrzychodniaContext> options) : base(options) { }
+
         public DbSet<Department> Departments { get; set; }
         public DbSet<Diagnosis> Diagnosis { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
@@ -19,7 +24,27 @@ namespace Projekt_SBD.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseOracle("User Id=ApplicationIdentity;Password=Admin123;Data Source=localhost:1521/FREE;");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema("ADMINISTRATOR");
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
+    public class PrzychodniaContextFactory : IDesignTimeDbContextFactory<PrzychodniaContext>
+    {
+        public PrzychodniaContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<PrzychodniaContext>();
             optionsBuilder.UseOracle("User Id=Administrator;Password=Admin123;Data Source=localhost:1521/FREE;");
+
+            return new PrzychodniaContext(optionsBuilder.Options);
         }
     }
 }

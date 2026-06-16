@@ -46,6 +46,7 @@ namespace Projekt_SBD.Data
         SupplyDetails,
         DepartmentList,
         RoomList_Admin,
+        RoomList_Reception,
         VisitList_Reception,
         VisitList_Patient,
         DoctorList_Patient,
@@ -56,6 +57,8 @@ namespace Projekt_SBD.Data
         DoctorAvailabilityView_Patient,
         LowStockSuppliesView,
         MyMedicalHistoryView,
+        MyProfileView_Patient,
+        MyProfileView_Doctor,
         
         ScheduleVisitForm_Reception,
         ScheduleVisitForm_Patient,
@@ -64,7 +67,8 @@ namespace Projekt_SBD.Data
         AddWorkerForm,
         AddEquipmentForm,
         SuppliesUsageReportForm,
-        CalculateAssetsValueScreen
+        CalculateAssetsValueScreen,
+        AddRoomForm
     }
 
     public static class ConsoleMenuInitializer
@@ -185,11 +189,12 @@ namespace Projekt_SBD.Data
             Menu patientMenu = new Menu(
                 ScreensEnum.PatientMenu, "Panel Pacjenta", "Witaj w swoim panelu!", ScreensEnum.MainMenu,
                 [
-                    new MenuOption(1, "Moja historia medyczna", ScreensEnum.MyMedicalHistoryView),
-                    new MenuOption(2, "Moje zaplanowane wizyty", ScreensEnum.VisitList_Patient),
-                    new MenuOption(3, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Patient),
-                    new MenuOption(4, "Sprawdź zajęte terminy", ScreensEnum.DoctorAvailabilityView_Patient),
-                    new MenuOption(5, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
+                    new MenuOption(1, "Mój profil", ScreensEnum.MyProfileView_Patient),
+                    new MenuOption(2, "Moja historia medyczna", ScreensEnum.MyMedicalHistoryView),
+                    new MenuOption(3, "Moje zaplanowane wizyty", ScreensEnum.VisitList_Patient),
+                    new MenuOption(4, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Patient),
+                    new MenuOption(5, "Sprawdź zajęte terminy", ScreensEnum.DoctorAvailabilityView_Patient),
+                    new MenuOption(6, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Patient),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -206,6 +211,7 @@ namespace Projekt_SBD.Data
                     new MenuOption(6, "Raport kosztów operacyjnych", ScreensEnum.MonthlyCostsForm),
                     new MenuOption(7, "Raport zużycia materiałów", ScreensEnum.SuppliesUsageReportForm),
                     new MenuOption(8, "Wylicz łączną wartość majątku", ScreensEnum.CalculateAssetsValueScreen),
+                    new MenuOption(9, "Dodaj nowy pokój", ScreensEnum.AddRoomForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -218,12 +224,13 @@ namespace Projekt_SBD.Data
                     new MenuOption(2, "Lista wizyt", ScreensEnum.VisitList_Reception),
                     new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Reception),
                     new MenuOption(4, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Reception),
-                    new MenuOption(5, "Grafik lekarzy (Zajęte terminy)", ScreensEnum.DoctorAvailabilityView_Reception),
-                    new MenuOption(6, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Reception),
-                    new MenuOption(7, "Odwołaj wizytę", ScreensEnum.CancelVisitForm),
-                    new MenuOption(8, "Sprawdź braki w magazynie", ScreensEnum.LowStockSuppliesView),
-                    new MenuOption(9, "Przyjmij dostawę materiałów", ScreensEnum.AddSupplyDeliveryForm),
-                    new MenuOption(10, "Wprowadź nowy materiał do bazy", ScreensEnum.CreateNewSupplyForm),
+                    new MenuOption(5, "Lista pokoi", ScreensEnum.RoomList_Reception),
+                    new MenuOption(6, "Grafik lekarzy (Zajęte terminy)", ScreensEnum.DoctorAvailabilityView_Reception),
+                    new MenuOption(7, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Reception),
+                    new MenuOption(8, "Odwołaj wizytę", ScreensEnum.CancelVisitForm),
+                    new MenuOption(9, "Sprawdź braki w magazynie", ScreensEnum.LowStockSuppliesView),
+                    new MenuOption(10, "Przyjmij dostawę materiałów", ScreensEnum.AddSupplyDeliveryForm),
+                    new MenuOption(11, "Wprowadź nowy materiał do bazy", ScreensEnum.CreateNewSupplyForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -232,12 +239,13 @@ namespace Projekt_SBD.Data
             Menu doctorMenu = new Menu(
                 ScreensEnum.DoctorMenu, "Panel Lekarza", "Dostęp do wizyt i pacjentów.", ScreensEnum.MainMenu,
                 [
-                    new MenuOption(1, "Mój grafik (Lista Wizyt)", ScreensEnum.DoctorAvailabilityView_Doctor),
-                    new MenuOption(2, "Lista pacjentów", ScreensEnum.PatientList_Doctor),
-                    new MenuOption(3, "Lista materiałów", ScreensEnum.SupplyList_Doctor),
-                    new MenuOption(4, "Historia Medyczna Pacjenta", ScreensEnum.DoctorPatientHistoryForm),
-                    new MenuOption(5, "Zużyj materiał do zabiegu", ScreensEnum.ConsumeSupplyForm),
-                    new MenuOption(6, "Zakończ wizytę (Dodaj Diagnozę)", ScreensEnum.CompleteVisitForm),
+                    new MenuOption(1, "Mój profil", ScreensEnum.MyProfileView_Doctor),
+                    new MenuOption(2, "Mój grafik (Lista Wizyt)", ScreensEnum.DoctorAvailabilityView_Doctor),
+                    new MenuOption(3, "Lista pacjentów", ScreensEnum.PatientList_Doctor),
+                    new MenuOption(4, "Lista materiałów", ScreensEnum.SupplyList_Doctor),
+                    new MenuOption(5, "Historia Medyczna Pacjenta", ScreensEnum.DoctorPatientHistoryForm),
+                    new MenuOption(6, "Zużyj materiał do zabiegu", ScreensEnum.ConsumeSupplyForm),
+                    new MenuOption(7, "Zakończ wizytę (Dodaj Diagnozę)", ScreensEnum.CompleteVisitForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -444,7 +452,7 @@ namespace Projekt_SBD.Data
                     new FormField(0, "Nazwa materiału", "np. Gaza jałowa", _ => true), 
                     new FormField(1, "Opis", "np. 1x1m", _ => true),
                     new FormField(2, "Ilość początkowa", "np. 100", _ => true),
-                    new FormField(3, "ID Pokoju", "Wpisz ID z listy powyżej", _ => true)
+                    new FormField(3, "Numer pokoju (ID)", "Wpisz ID z listy powyżej", _ => true)
                 ],
                 ScreensEnum.ReceptionMenu, ScreensEnum.ReceptionMenu,
                 (f) => {
@@ -498,7 +506,7 @@ namespace Projekt_SBD.Data
                     new FormField(5, "PESEL", "11 cyfr", RegexUtilities.IsValidPesel),
                     new FormField(6, "Hasło", "", _ => true),
                     new FormField(7, "Wynagrodzenie", "Podaj miesięczną pensję w PLN (np. 15000)", _ => true),
-                    new FormField(8, "ID Pokoju", "Dla lekarza wymagane, dla reszty opcjonalne (wpisz ID lub zostaw puste)", _ => true)
+                    new FormField(8, "Numer pokoju (ID)", "Dla lekarza wymagane, dla reszty opcjonalne (wpisz ID lub zostaw puste)", _ => true)
                 ],
                 ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
                 (f) => {
@@ -555,7 +563,7 @@ namespace Projekt_SBD.Data
                     new FormField(2, "Stan", "np. Nowy, Używany", _ => true),
                     new FormField(3, "Wartość (PLN)", "np. 50000", _ => true),
                     new FormField(4, "Data zakupu (RRRR-MM-DD)", "np. 2026-06-15", _ => true),
-                    new FormField(5, "ID Pokoju", "Wpisz ID z listy powyżej", _ => true)
+                    new FormField(5, "Numer pokoju (ID)", "Wpisz ID z listy powyżej", _ => true)
                 ],
                 ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
                 (f) => {
@@ -586,6 +594,48 @@ namespace Projekt_SBD.Data
                     Console.WriteLine("=================================");
                 }
             ));
+
+            screens.Add(new Form(ScreensEnum.AddRoomForm, "Dodaj nowy pokój", "Tworzy nowy wpis Room",
+                [
+                    new FormField(0, "Numer pokoju (ID)", "np. 35", _ => true),
+                    new FormField(1, "Piętro", "np. 1, 2", _ => true),
+                    new FormField(2, "Przeznaczenie", "np. Gabinet Kardiologiczny", _ => true),
+                    new FormField(3, "ID Oddziału", "Wpisz ID z listy powyżej", _ => true)
+                ],
+                ScreensEnum.AdminMenu, ScreensEnum.AdminMenu,
+                (f) => {
+                    try {
+                        using var ctx = new PrzychodniaContext();
+                        int newRoomId = int.Parse(f[0].Value);
+                        if (ctx.Rooms.Any(r => r.Id == newRoomId))
+                        {
+                            throw new Exception($"Pokój o numerze {newRoomId} już istnieje w bazie!");
+                        }
+
+                        var room = new Room {
+                            Id = newRoomId,
+                            Floor = int.TryParse(f[1].Value, out int flr) ? flr : 0,
+                            Purpose = f[2].Value,
+                            Status = "Wolny",
+                            DepartmentId = int.Parse(f[3].Value)
+                        };
+                        ctx.Rooms.Add(room);
+                        ctx.SaveChanges();
+                        Console.WriteLine($"\nSukces! Dodano nowy pokój do bazy! ID (numer) to: {room.Id}");
+                    } catch(Exception e) { Console.WriteLine("\nBłąd: Upewnij się, że podałeś prawidłowe dane! " + e.Message); }
+                    Console.ReadKey();
+                },
+                () => {
+                    using var ctx = new PrzychodniaContext();
+                    var deps = ctx.Departments.ToList();
+                    Console.WriteLine("\n=== DOSTĘPNE ODDZIAŁY W KLINICE ===");
+                    foreach(var d in deps) {
+                        Console.WriteLine($"[ID: {d.Id}] {d.Name}");
+                    }
+                    Console.WriteLine("===================================");
+                }
+            ));
+
 
             screens.Add(new Form(ScreensEnum.SuppliesUsageReportForm, "Raport Zużycia Materiałów", "Funkcja SuppliesUsageReport",
                 [ new FormField(0, "Data od (RRRR-MM-DD)", "", _ => true), new FormField(1, "Data do (RRRR-MM-DD)", "", _ => true) ],
@@ -630,6 +680,41 @@ namespace Projekt_SBD.Data
 
             
             
+            screens.Add(new Menu(ScreensEnum.MyProfileView_Patient, "Mój profil", "Twoje dane", ScreensEnum.PatientMenu, 
+                [ new MenuOption(0, "Wróć", ScreensEnum.PatientMenu) ], 
+                () => {
+                    if (Session.CurrentPatient != null) {
+                        var p = Session.CurrentPatient;
+                        Console.WriteLine($"\n--- PROFIL PACJENTA ---");
+                        Console.WriteLine($"ID: {p.Id}");
+                        Console.WriteLine($"Imię i nazwisko: {p.FirstName} {p.LastName}");
+                        Console.WriteLine($"PESEL: {p.Pesel}");
+                        Console.WriteLine($"Email: {p.Email}");
+                        Console.WriteLine($"Telefon: {p.Phone}");
+                        Console.WriteLine("-----------------------\n");
+                    }
+                }
+            ));
+
+            screens.Add(new Menu(ScreensEnum.MyProfileView_Doctor, "Mój profil", "Twoje dane pracownicze", ScreensEnum.DoctorMenu, 
+                [ new MenuOption(0, "Wróć", ScreensEnum.DoctorMenu) ], 
+                () => {
+                    if (Session.CurrentWorker != null) {
+                        var w = Session.CurrentWorker;
+                        Console.WriteLine($"\n--- PROFIL PRACOWNIKA ---");
+                        Console.WriteLine($"ID: {w.Id}");
+                        Console.WriteLine($"Imię i nazwisko: {w.FirstName} {w.LastName}");
+                        Console.WriteLine($"Stanowisko: {w.Position}");
+                        Console.WriteLine($"Numer pokoju (ID): {w.RoomId?.ToString() ?? "Brak"}");
+                        Console.WriteLine($"PESEL: {w.Pesel}");
+                        Console.WriteLine($"Email: {w.Email}");
+                        Console.WriteLine($"Telefon: {w.Phone}");
+                        Console.WriteLine($"Wynagrodzenie: {w.Salary} PLN");
+                        Console.WriteLine("-------------------------\n");
+                    }
+                }
+            ));
+
             screens.Add(new Menu(ScreensEnum.MyMedicalHistoryView, "Historia Medyczna (Widok Oracle)", "Podgląd z v_PatientMedicalHistory", ScreensEnum.PatientMenu, 
                 [ new MenuOption(0, "Wróć", ScreensEnum.PatientMenu) ], 
                 () => {
@@ -637,7 +722,7 @@ namespace Projekt_SBD.Data
                         using var ctx = new PrzychodniaContext();
                         var data = new ClinicService(ctx).GetPatientMedicalHistoryViewAsync(Session.CurrentPatient.Id).Result;
                         Console.WriteLine($"\nHISTORIA PACJENTA {Session.CurrentPatient.FirstName}");
-                        foreach (var d in data) Console.WriteLine($"Data: {d.VisitDate}, Diagnoza: {d.Illness}, Lekarz: {d.DoctorFirstName} {d.DoctorLastName}");
+                        foreach (var d in data) Console.WriteLine($"Data: {d.VisitDate}, Diagnoza: {d.Illness}, Lekarz: {d.DoctorFirstName} {d.DoctorLastName}, Pokój: {d.RoomId}");
                         Console.WriteLine();
                     }
                 }
@@ -771,21 +856,26 @@ namespace Projekt_SBD.Data
             screens.Add(new ConsoleList<Supply>(ScreensEnum.SupplyList_Reception, "Lista materiałów", "Stan magazynu", ScreensEnum.ReceptionMenu, null, new List<Supply>(), supplyColumns, loadSupplies));
             screens.Add(new ConsoleList<Supply>(ScreensEnum.SupplyList_Doctor, "Lista materiałów", "Stan magazynu", ScreensEnum.DoctorMenu, null, new List<Supply>(), supplyColumns, loadSupplies));
 
-            screens.Add(new ConsoleList<Room>(
-                ScreensEnum.RoomList_Admin, "Lista Pokoi", "Wszystkie gabinety", ScreensEnum.AdminMenu, 
-                null, new List<Room>(), 
-                [
-                    new ListColumn<Room>("ID", r => r.Id.ToString()),
-                    new ListColumn<Room>("Piętro", r => r.Floor.ToString()),
-                    new ListColumn<Room>("Przeznaczenie", r => r.Purpose),
-                    new ListColumn<Room>("Status", r => r.Status)
-                ],
-                () => {
-                    using var ctx = new PrzychodniaContext();
-                    var listScreen = screens.First(s => s.Id == ScreensEnum.RoomList_Admin) as ConsoleList<Room>;
-                    listScreen.Items = ctx.Rooms.ToList();
-                }
-            ));
+            Action loadRooms = () => {
+                using var ctx = new PrzychodniaContext();
+                var rooms = ctx.Rooms.ToList();
+                
+                var listAdmin = screens.FirstOrDefault(s => s.Id == ScreensEnum.RoomList_Admin) as ConsoleList<Room>;
+                if (listAdmin != null) listAdmin.Items = rooms;
+
+                var listRec = screens.FirstOrDefault(s => s.Id == ScreensEnum.RoomList_Reception) as ConsoleList<Room>;
+                if (listRec != null) listRec.Items = rooms;
+            };
+
+            var roomColumns = new List<ListColumn<Room>> {
+                new ListColumn<Room>("ID", r => r.Id.ToString()),
+                new ListColumn<Room>("Piętro", r => r.Floor.ToString()),
+                new ListColumn<Room>("Przeznaczenie", r => r.Purpose),
+                new ListColumn<Room>("Status", r => r.Status)
+            };
+
+            screens.Add(new ConsoleList<Room>(ScreensEnum.RoomList_Admin, "Lista Pokoi", "Wszystkie gabinety", ScreensEnum.AdminMenu, null, new List<Room>(), roomColumns, loadRooms));
+            screens.Add(new ConsoleList<Room>(ScreensEnum.RoomList_Reception, "Lista Pokoi", "Wszystkie gabinety", ScreensEnum.ReceptionMenu, null, new List<Room>(), roomColumns, loadRooms));
 
             screens.Add(new ConsoleList<Visit>(
                 ScreensEnum.VisitList_Reception, "Lista Wizyt", "Wszystkie zaplanowane wizyty", ScreensEnum.ReceptionMenu, 
@@ -810,6 +900,7 @@ namespace Projekt_SBD.Data
                 [
                     new ListColumn<Visit>("ID Wizyty", v => v.Id.ToString()),
                     new ListColumn<Visit>("Lekarz ID", v => v.WorkerId.ToString()),
+                    new ListColumn<Visit>("Pokój", v => v.RoomId.ToString()),
                     new ListColumn<Visit>("Cel wizyty", v => v.Purpose),
                     new ListColumn<Visit>("Data", v => v.Start.ToString("yyyy-MM-dd HH:mm")),
                     new ListColumn<Visit>("Koszt", v => v.Cost.ToString())
@@ -818,7 +909,7 @@ namespace Projekt_SBD.Data
                     using var ctx = new PrzychodniaContext();
                     var listScreen = screens.First(s => s.Id == ScreensEnum.VisitList_Patient) as ConsoleList<Visit>;
                     if(Session.CurrentPatient != null) {
-                        listScreen.Items = ctx.Visits.Where(v => v.PatientId == Session.CurrentPatient.Id).OrderBy(v => v.Start).ToList();
+                        listScreen.Items = ctx.Visits.Where(v => v.PatientId == Session.CurrentPatient.Id && v.DiagnosisId == null).OrderBy(v => v.Start).ToList();
                     }
                 }
             ));

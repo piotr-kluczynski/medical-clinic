@@ -20,6 +20,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON "Supplies" TO ApplicationIdentity;
 GRANT SELECT, INSERT, UPDATE, DELETE ON "Visits" TO ApplicationIdentity;
 GRANT SELECT, INSERT, UPDATE, DELETE ON "Diagnosis" TO ApplicationIdentity;
 
+GRANT SELECT, INSERT, UPDATE, DELETE ON "Visits_HIST" TO ApplicationIdentity;
+GRANT SELECT, INSERT, UPDATE, DELETE ON "Supplies_HIST" TO ApplicationIdentity;
+GRANT SELECT, INSERT, UPDATE, DELETE ON "__EFMigrationsHistory" TO ApplicationIdentity;
+
 
 GRANT SELECT ON "Departments" TO dev_piotr;
 GRANT SELECT ON "Rooms" TO dev_piotr;

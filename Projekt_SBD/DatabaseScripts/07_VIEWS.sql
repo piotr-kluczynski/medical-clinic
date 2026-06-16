@@ -8,7 +8,8 @@ SELECT
     v."End"
 FROM "Workers" w
 JOIN "Visits" v ON w."Id" = v."WorkerId"
-WHERE w."Position" NOT IN ('Reception', 'Administrator', 'Nurse', 'Owner', 'Recepcja', 'Pielęgniarka', 'Administrator');
+WHERE w."Position" NOT IN ('Reception', 'Administrator', 'Nurse', 'Owner', 'Recepcja', 'Pielęgniarka', 'Administrator')
+  AND v."DiagnosisId" IS NULL;
 /
 
 CREATE OR REPLACE VIEW "v_PatientMedicalHistory" AS
@@ -20,7 +21,8 @@ SELECT
     d."Symptoms",
     d."Illness",
     w."FirstName" AS "DoctorFirstName",
-    w."LastName" AS "DoctorLastName"
+    w."LastName" AS "DoctorLastName",
+    v."RoomId"
 FROM "Patients" p
 JOIN "Visits" v ON p."Id" = v."PatientId"
 JOIN "Diagnosis" d ON d."Id" = v."DiagnosisId"
@@ -38,3 +40,7 @@ FROM "Supplies" s
 JOIN "Rooms" r ON s."RoomId" = r."Id"
 WHERE s."Quantity" < 10;
 /
+
+GRANT SELECT ON "v_DoctorAvailability" TO ApplicationIdentity;
+GRANT SELECT ON "v_PatientMedicalHistory" TO ApplicationIdentity;
+GRANT SELECT ON "v_LowStockSupplies" TO ApplicationIdentity;

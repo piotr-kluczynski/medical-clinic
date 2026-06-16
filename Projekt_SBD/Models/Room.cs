@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Projekt_SBD.Models
 {
     public class Room
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public int Floor { get; set; }
         public string Purpose { get; set; }

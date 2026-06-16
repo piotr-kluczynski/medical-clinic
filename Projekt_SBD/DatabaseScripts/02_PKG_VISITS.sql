@@ -39,16 +39,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_VISITS AS
         v_worker_count NUMBER;
     BEGIN
         SELECT COUNT(*)
-        INTO v_room_count
-        FROM "Visits"
-        WHERE "RoomId" = p_room_id
-          AND (p_start_time < "End" AND p_end_time > "Start");
-
-        IF v_room_count > 0 THEN
-            RAISE_APPLICATION_ERROR(-20001, 'Wybrany pokój jest już zajęty w tym czasie.');
-        END IF;
-
-        SELECT COUNT(*)
         INTO v_worker_count
         FROM "Visits"
         WHERE "WorkerId" = p_worker_id
@@ -56,6 +46,16 @@ CREATE OR REPLACE PACKAGE BODY PKG_VISITS AS
 
         IF v_worker_count > 0 THEN
             RAISE_APPLICATION_ERROR(-20002, 'Lekarz ma już zaplanowaną wizytę w tym czasie.');
+        END IF;
+
+        SELECT COUNT(*)
+        INTO v_room_count
+        FROM "Visits"
+        WHERE "RoomId" = p_room_id
+          AND (p_start_time < "End" AND p_end_time > "Start");
+
+        IF v_room_count > 0 THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Wybrany pokój jest już zajęty w tym czasie.');
         END IF;
 
         INSERT INTO "Visits" ("Purpose", "Start", "End", "Cost", "PatientId", "RoomId", "WorkerId")
@@ -117,3 +117,5 @@ CREATE OR REPLACE PACKAGE BODY PKG_VISITS AS
 
 END PKG_VISITS;
 /
+
+GRANT EXECUTE ON PKG_VISITS TO db_procexecutor;

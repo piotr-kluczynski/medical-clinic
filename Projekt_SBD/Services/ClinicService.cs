@@ -48,6 +48,7 @@ namespace Projekt_SBD.Services
         public string Illness { get; set; }
         public string DoctorFirstName { get; set; }
         public string DoctorLastName { get; set; }
+        public int RoomId { get; set; }
     }
 
     public class LowStockSupplyViewDto
@@ -73,7 +74,7 @@ namespace Projekt_SBD.Services
         public async Task ScheduleVisitAsync(int patientId, int workerId, int roomId, DateTime startTime, DateTime endTime, string purpose, int cost)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "BEGIN PKG_VISITS.ScheduleVisit(:p0, :p1, :p2, :p3, :p4, :p5, :p6); END;",
+                "BEGIN ADMINISTRATOR.PKG_VISITS.ScheduleVisit(:p0, :p1, :p2, :p3, :p4, :p5, :p6); END;",
                 patientId, workerId, roomId, startTime, endTime, purpose, cost
             );
         }
@@ -81,7 +82,7 @@ namespace Projekt_SBD.Services
         public async Task CancelVisitAsync(int visitId)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "BEGIN PKG_VISITS.CancelVisit(:p0); END;",
+                "BEGIN ADMINISTRATOR.PKG_VISITS.CancelVisit(:p0); END;",
                 visitId
             );
         }
@@ -94,7 +95,7 @@ namespace Projekt_SBD.Services
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
 
-            command.CommandText = "BEGIN :ret := PKG_VISITS.CheckDoctorAvailability(:p0, :p1); END;";
+            command.CommandText = "BEGIN :ret := ADMINISTRATOR.PKG_VISITS.CheckDoctorAvailability(:p0, :p1); END;";
             
             var retParam = new OracleParameter("ret", OracleDbType.RefCursor, ParameterDirection.Output);
             command.Parameters.Add(retParam);
@@ -120,7 +121,7 @@ namespace Projekt_SBD.Services
         public async Task ConsumeSupplyAsync(int supplyId, int amount)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "BEGIN PKG_INVENTORY.ConsumeSupply(:p0, :p1); END;",
+                "BEGIN ADMINISTRATOR.PKG_INVENTORY.ConsumeSupply(:p0, :p1); END;",
                 supplyId, amount
             );
         }
@@ -128,7 +129,7 @@ namespace Projekt_SBD.Services
         public async Task AddSupplyDeliveryAsync(int supplyId, int amount)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "BEGIN PKG_INVENTORY.AddSupplyDelivery(:p0, :p1); END;",
+                "BEGIN ADMINISTRATOR.PKG_INVENTORY.AddSupplyDelivery(:p0, :p1); END;",
                 supplyId, amount
             );
         }
@@ -138,7 +139,7 @@ namespace Projekt_SBD.Services
             var retParam = new OracleParameter("ret", OracleDbType.Decimal, ParameterDirection.Output);
 
             await _context.Database.ExecuteSqlRawAsync(
-                "BEGIN :ret := PKG_INVENTORY.CalculateAssetsValue(); END;",
+                "BEGIN :ret := ADMINISTRATOR.PKG_INVENTORY.CalculateAssetsValue(); END;",
                 retParam
             );
 
@@ -159,7 +160,7 @@ namespace Projekt_SBD.Services
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
 
-            command.CommandText = "BEGIN :ret := PKG_REPORTS.MonthlyCosts(:p0, :p1); END;";
+            command.CommandText = "BEGIN :ret := ADMINISTRATOR.PKG_REPORTS.MonthlyCosts(:p0, :p1); END;";
 
             var retParam = new OracleParameter("ret", OracleDbType.RefCursor, ParameterDirection.Output);
             command.Parameters.Add(retParam);
@@ -188,7 +189,7 @@ namespace Projekt_SBD.Services
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
 
-            command.CommandText = "BEGIN :ret := PKG_REPORTS.SuppliesUsageReport(:p0, :p1); END;";
+            command.CommandText = "BEGIN :ret := ADMINISTRATOR.PKG_REPORTS.SuppliesUsageReport(:p0, :p1); END;";
 
             var retParam = new OracleParameter("ret", OracleDbType.RefCursor, ParameterDirection.Output);
             command.Parameters.Add(retParam);
@@ -216,7 +217,7 @@ namespace Projekt_SBD.Services
             using var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM \"v_DoctorAvailability\"";
+            command.CommandText = "SELECT * FROM ADMINISTRATOR.\"v_DoctorAvailability\"";
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -240,7 +241,7 @@ namespace Projekt_SBD.Services
             using var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM \"v_PatientMedicalHistory\" WHERE \"PatientId\" = :p0";
+            command.CommandText = "SELECT * FROM ADMINISTRATOR.\"v_PatientMedicalHistory\" WHERE \"PatientId\" = :p0";
             command.Parameters.Add(new OracleParameter("p0", patientId));
 
             using var reader = await command.ExecuteReaderAsync();
@@ -255,7 +256,8 @@ namespace Projekt_SBD.Services
                     Symptoms = reader["Symptoms"].ToString(),
                     Illness = reader["Illness"].ToString(),
                     DoctorFirstName = reader["DoctorFirstName"].ToString(),
-                    DoctorLastName = reader["DoctorLastName"].ToString()
+                    DoctorLastName = reader["DoctorLastName"].ToString(),
+                    RoomId = Convert.ToInt32(reader["RoomId"])
                 });
             }
             return result;
@@ -267,7 +269,7 @@ namespace Projekt_SBD.Services
             using var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM \"v_LowStockSupplies\"";
+            command.CommandText = "SELECT * FROM ADMINISTRATOR.\"v_LowStockSupplies\"";
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
