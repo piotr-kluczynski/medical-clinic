@@ -68,7 +68,8 @@ namespace Projekt_SBD.Data
         AddEquipmentForm,
         SuppliesUsageReportForm,
         CalculateAssetsValueScreen,
-        AddRoomForm
+        AddRoomForm,
+        EditVisitForm_Reception
     }
 
     public static class ConsoleMenuInitializer
@@ -226,11 +227,12 @@ namespace Projekt_SBD.Data
                     new MenuOption(4, "Lista lekarzy (Wszyscy)", ScreensEnum.DoctorList_Reception),
                     new MenuOption(5, "Lista pokoi", ScreensEnum.RoomList_Reception),
                     new MenuOption(6, "Grafik lekarzy (Zajęte terminy)", ScreensEnum.DoctorAvailabilityView_Reception),
-                    new MenuOption(7, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Reception),
-                    new MenuOption(8, "Odwołaj wizytę", ScreensEnum.CancelVisitForm),
-                    new MenuOption(9, "Sprawdź braki w magazynie", ScreensEnum.LowStockSuppliesView),
-                    new MenuOption(10, "Przyjmij dostawę materiałów", ScreensEnum.AddSupplyDeliveryForm),
-                    new MenuOption(11, "Wprowadź nowy materiał do bazy", ScreensEnum.CreateNewSupplyForm),
+                    new MenuOption(7, "Edytuj wizytę", ScreensEnum.EditVisitForm_Reception),
+                    new MenuOption(8, "Umów wizytę", ScreensEnum.ScheduleVisitForm_Reception),
+                    new MenuOption(9, "Odwołaj wizytę", ScreensEnum.CancelVisitForm),
+                    new MenuOption(10, "Sprawdź braki w magazynie", ScreensEnum.LowStockSuppliesView),
+                    new MenuOption(11, "Przyjmij dostawę materiałów", ScreensEnum.AddSupplyDeliveryForm),
+                    new MenuOption(12, "Wprowadź nowy materiał do bazy", ScreensEnum.CreateNewSupplyForm),
                     new MenuOption(0, "Wyloguj", ScreensEnum.MainMenu, null, _ => Session.Logout())
                 ]
             );
@@ -407,6 +409,8 @@ namespace Projekt_SBD.Data
                     Console.ReadKey();
                 }
             ));
+
+            screens.Add(new CustomEditVisitScreen());
 
             screens.Add(new Form(ScreensEnum.CancelVisitForm, "Odwołaj Wizytę", "Procedura CancelVisit",
                 [ new FormField(0, "ID Wizyty", "", _ => true) ],
@@ -937,6 +941,76 @@ namespace Projekt_SBD.Data
             screens.Add(new ConsoleList<Worker>(ScreensEnum.DoctorList_Reception, "Lista Lekarzy", "Wszyscy lekarze w przychodni", ScreensEnum.ReceptionMenu, null, new List<Worker>(), doctorColumns, loadDoctors));
 
             return screens;
+        }
+    }
+
+    public class CustomEditVisitScreen : IConsoleScreen
+    {
+        public ScreensEnum Id => ScreensEnum.EditVisitForm_Reception;
+
+        public ScreensEnum Run()
+        {
+            Console.Clear();
+            Console.WriteLine("=== EDYCJA WIZYTY ===\n");
+            try
+            {
+                using var ctx = new PrzychodniaContext();
+                var visits = ctx.Visits.OrderByDescending(v => v.Start).Take(20).ToList();
+                Console.WriteLine("Ostatnie 20 wizyt:");
+                Console.WriteLine(string.Format("{0,-5} | {1,-20} | {2,-20} | {3,-10} | {4,-15}", "ID", "Data", "Cel", "Koszt", "Pacjent ID"));
+                Console.WriteLine(new string('-', 80));
+                foreach(var v in visits)
+                {
+                    string purpose = v.Purpose ?? "";
+                    if (purpose.Length > 20) purpose = purpose.Substring(0, 20);
+                    Console.WriteLine(string.Format("{0,-5} | {1,-20} | {2,-20} | {3,-10} | {4,-15}", v.Id, v.Start.ToString("yyyy-MM-dd HH:mm"), purpose.PadRight(20), v.Cost, v.PatientId));
+                }
+
+                Console.Write("\nWpisz ID wizyty do edycji (lub '0' aby anulować): ");
+                string idStr = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(idStr) || idStr == "0") return ScreensEnum.ReceptionMenu;
+
+                if (int.TryParse(idStr, out int visitId))
+                {
+                    var visit = ctx.Visits.FirstOrDefault(v => v.Id == visitId);
+                    if (visit == null)
+                    {
+                        Console.WriteLine("Nie znaleziono wizyty o takim ID.");
+                        Console.ReadKey();
+                        return ScreensEnum.ReceptionMenu;
+                    }
+
+                    string ReadNewValue(string label, string currentValue)
+                    {
+                        Console.Write($"{label} [Obecnie: {currentValue}] (Wciśnij Enter by zostawić): ");
+                        string input = Console.ReadLine();
+                        return string.IsNullOrWhiteSpace(input) ? currentValue : input;
+                    }
+
+                    string newPurpose = ReadNewValue("Cel wizyty", visit.Purpose ?? "");
+                    string newCost = ReadNewValue("Koszt wizyty", visit.Cost.ToString());
+                    string newStart = ReadNewValue("Data (yyyy-MM-dd HH:mm)", visit.Start.ToString("yyyy-MM-dd HH:mm"));
+                    string newWorkerId = ReadNewValue("Lekarz (ID)", visit.WorkerId.ToString());
+                    string newPatientId = ReadNewValue("Pacjent (ID)", visit.PatientId.ToString());
+                    string newRoomId = ReadNewValue("Numer pokoju (ID)", visit.RoomId.ToString());
+
+                    visit.Purpose = newPurpose;
+                    if (int.TryParse(newCost, out int cost)) visit.Cost = cost;
+                    if (DateTime.TryParse(newStart, out DateTime start)) { visit.Start = start; visit.End = start.AddMinutes(30); }
+                    if (int.TryParse(newWorkerId, out int workerId)) visit.WorkerId = workerId;
+                    if (int.TryParse(newPatientId, out int patientId)) visit.PatientId = patientId;
+                    if (int.TryParse(newRoomId, out int roomId)) visit.RoomId = roomId;
+
+                    ctx.SaveChanges();
+                    Console.WriteLine("Zapisano pomyślnie.");
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Błąd: " + e.Message);
+            }
+            Console.ReadKey();
+            return ScreensEnum.ReceptionMenu;
         }
     }
 }

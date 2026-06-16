@@ -25,6 +25,7 @@ namespace Projekt_SBD.Data
             {
                 room = new Room 
                 { 
+                    Id = 101,
                     Floor = 1, 
                     Purpose = "Gabinet Konsultacyjny", 
                     Status = "Wolny", 
