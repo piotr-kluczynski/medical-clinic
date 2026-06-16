@@ -32,7 +32,7 @@ Aby uruchomić projekt na swoim środowisku lokalnym, musisz posiadać:
 Pobierz projekt na swój dysk:
 
 ```bash
-git clone <adres-twojego-repozytorium>
+git clone <https://github.com/piotr-kluczynski/medical-clinic>
 cd medical-clinic/Projekt_SBD
 ```
 
@@ -53,7 +53,7 @@ Połącz się z utworzoną bazą danych poprzez **Oracle SQL Developer** na poś
 *   **Host:** `localhost`
 *   **Port:** `1521`
 *   **SID/Service Name:** `FREEPDB1` (lub `FREE`)
-*   **User:** `SYSTEM`
+*   **User:** `System`
 *   **Password:** `Admin123`
 *   **Rola:** Domyślna (lub `SYSDBA`)
 
